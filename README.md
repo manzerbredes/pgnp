@@ -27,5 +27,23 @@ Load PGN from string:
     catch(...){
         // Handle exceptions
     }
+Various API calls:
 
-// TODO: How to use the PGN object with the parsed data
+  pgn.HasTag("Round"); // Check if tag exists
+  try {
+    pgn.STRCheck(); // Perform a Seven Tag Roster check
+  }
+  catch(...){
+      // Handle exceptions
+  }
+  std::vector<std::string> tags=pgn.GetTagList(); // Get a list of tags
+  std::string tagValue=GetTagValue("Date"); // Get the value of a tag
+Access to moves:
+
+  pgnp::HalfMove *move=pgn.GetMoves(); // Get the tree of half moves
+  int length=move->GetLength(); // Get the number of half moves in the move MainLine
+  // Public members:
+  // move->variations contains variations of the current move
+  // move->isBlack boolean that says if current half move is for the black side
+  // Check pgnp.hpp for more infos for other field (comments, count, etc.)
+
