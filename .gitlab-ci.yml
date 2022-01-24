@@ -1,0 +1,6 @@
+archlinux:
+  image: "archlinux:latest"
+  before_script:
+    - pacman -Sy base-devel cmake --noconfirm --needed
+  script:
+    - mkdir build && cd build && cmake ../ && make && make test && ctest
