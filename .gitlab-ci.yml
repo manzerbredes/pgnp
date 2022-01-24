@@ -3,4 +3,4 @@ archlinux:
   before_script:
     - pacman -Sy base-devel cmake --noconfirm --needed
   script:
-    - mkdir build && cd build && cmake ../ && make && make test && cd tests && ./pgnp_tests
+    - mkdir build && cd build && cmake ../ && make && cd tests && ./pgnp_tests
