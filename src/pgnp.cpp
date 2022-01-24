@@ -1,6 +1,7 @@
 
 #include "pgnp.hpp"
 #include <iostream>
+#include <string>
 
 #define IS_BLANK(c) (c == ' ' || c == '\n' || c == '\t')
 #define IS_DIGIT(c)                                                            \
@@ -59,6 +60,8 @@ PGN::~PGN() {
     delete moves;
 }
 
+std::string PGN::GetResult() { return (result); }
+
 void PGN::FromFile(std::string filepath) {
   std::ifstream file(filepath);
 
@@ -83,6 +86,9 @@ void PGN::FromString(std::string pgn_content) {
       }
     }
     loc++;
+  }
+  if (result.size() <= 0) {
+    throw InvalidGameResult();
   }
 }
 
@@ -124,7 +130,18 @@ int PGN::ParseLine(int loc, HalfMove *hm) {
   // Check if we reach score entry (* or 1-0 or 0-1 or 1/2-1/2)
   if (!IS_EOF(loc + 1)) {
     char nc = pgn_content[loc + 1]; // Next c
-    if ((IS_DIGIT(c) && nc == '-') or (IS_DIGIT(c) && nc == '/')) {
+    if ((IS_DIGIT(c) && nc == '-') or (IS_DIGIT(c) && nc == '/') or c == '*') {
+      if (c == '*') {
+        result = "*";
+      } else if (nc == '-') {
+        if (c == '1') {
+          result = "1-0";
+        } else {
+          result = "0-1";
+        }
+      } else {
+        result = "1/2-1/2";
+      }
       return (loc);
     }
   }

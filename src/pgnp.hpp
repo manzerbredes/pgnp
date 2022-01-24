@@ -35,6 +35,7 @@ class PGN {
 private:
   std::unordered_map<std::string, std::string> tags;
   std::vector<std::string> tagkeys;
+  std::string result;
 
   HalfMove *moves;
   std::string pgn_content;
@@ -50,6 +51,7 @@ public:
   void Dump();
   std::vector<std::string> GetTagList();
   std::string GetTagValue(std::string);
+  std::string GetResult();
   HalfMove *GetMoves();
 
 private:
@@ -70,6 +72,10 @@ struct UnexpectedEOF : public std::exception {
 
 struct InvalidTagName : public std::exception {
   const char *what() const throw() { return "Invalid tag name"; }
+};
+
+struct InvalidGameResult : public std::exception {
+  const char *what() const throw() { return "Invalid game result"; }
 };
 
 struct UnexpectedCharacter : public std::exception {

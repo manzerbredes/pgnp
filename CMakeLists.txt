@@ -12,5 +12,4 @@ configure_file(src/pgnp.hpp ${PGNP_INCLUDE_DIR} COPYONLY)
 include_directories(${PGNP_INCLUDE_DIR})
 
 # Unit tests
-enable_testing()
 add_subdirectory(./tests)

@@ -3,7 +3,7 @@
 
 using namespace pgnp;
 
-TEST_CASE("Valid PGN", "[pgn1]") {
+TEST_CASE("Valid PGN", "[valid/pgn1]") {
   PGN pgn;
   REQUIRE_NOTHROW(pgn.FromFile("pgn_files/valid/pgn1.pgn"));
   REQUIRE_THROWS(pgn.STRCheck());
@@ -55,18 +55,22 @@ TEST_CASE("Valid PGN", "[pgn1]") {
     CHECK(pgn.GetTagValue("TimeControl") == "600+5");
     CHECK_THROWS_AS(pgn.GetTagValue("InvalidTagName"), InvalidTagName);
   }
+
+  CHECK(pgn.GetResult() == "*");
 }
 
-TEST_CASE("Valid PGN", "[pgn2]") {
+TEST_CASE("Valid PGN", "[valid/pgn2]") {
   PGN pgn;
   REQUIRE_NOTHROW(pgn.FromFile("pgn_files/valid/pgn2.pgn"));
   REQUIRE_THROWS(pgn.STRCheck());
   REQUIRE(pgn.GetMoves()->GetLength() == 66);
+  CHECK(pgn.GetResult() == "0-1");
 }
 
-TEST_CASE("Seven Tag Roster", "[pgn1]") {
+TEST_CASE("Seven Tag Roster", "[std/pgn1]") {
   PGN pgn;
   REQUIRE_NOTHROW(pgn.FromFile("pgn_files/str/pgn1.pgn"));
   REQUIRE_NOTHROW(pgn.STRCheck());
   REQUIRE(pgn.GetMoves()->GetLength() == 85);
+  CHECK(pgn.GetResult() == "1/2-1/2");
 }
