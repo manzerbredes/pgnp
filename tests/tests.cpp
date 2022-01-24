@@ -7,7 +7,54 @@ TEST_CASE("Valid PGN", "[pgn1]") {
   PGN pgn;
   REQUIRE_NOTHROW(pgn.FromFile("pgn_files/valid/pgn1.pgn"));
   REQUIRE_THROWS(pgn.STRCheck());
-  REQUIRE(pgn.GetMoves()->GetLength() == 6);
+
+  HalfMove *m = pgn.GetMoves();
+  REQUIRE(m->GetLength() == 6);
+
+  SECTION("Main line move checks") {
+    CHECK(m->move == "g3");
+
+    m = m->MainLine;
+    CHECK(m->move == "d5");
+
+    m = m->MainLine;
+    CHECK(m->move == "Bg2");
+
+    m = m->MainLine;
+    CHECK(m->move == "Nf6");
+
+    m = m->MainLine;
+    CHECK(m->move == "c4");
+
+    m = m->MainLine;
+    CHECK(m->move == "c6");
+  }
+
+  SECTION("Main line color checks") {
+    m = pgn.GetMoves();
+    CHECK_FALSE(m->isBlack);
+
+    m = m->MainLine;
+    CHECK(m->isBlack);
+
+    m = m->MainLine;
+    CHECK_FALSE(m->isBlack);
+
+    m = m->MainLine;
+    CHECK(m->isBlack);
+  }
+
+  SECTION("Tag exists checks") {
+    CHECK(pgn.HasTag("WhiteElo"));
+    CHECK_FALSE(pgn.HasTag("Round"));
+    CHECK(pgn.HasTag("TimeControl"));
+  }
+
+  SECTION("Tag values checks") {
+    CHECK(pgn.GetTagValue("WhiteElo") == "1830");
+    CHECK(pgn.GetTagValue("TimeControl") == "600+5");
+    CHECK_THROWS_AS(pgn.GetTagValue("InvalidTagName"), InvalidTagName);
+  }
 }
 
 TEST_CASE("Valid PGN", "[pgn2]") {

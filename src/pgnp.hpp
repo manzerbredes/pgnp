@@ -2,6 +2,7 @@
 #include <exception>
 #include <fstream>
 #include <iostream>
+#include <sstream>
 #include <streambuf>
 #include <string>
 #include <unordered_map>
@@ -24,6 +25,7 @@ public:
 
   HalfMove();
   ~HalfMove();
+  /// @brief Get number of HalfMove in the MailLine
   int GetLength();
   /// @brief Dump move and all its variations
   void Dump();
@@ -64,6 +66,21 @@ private:
 
 struct UnexpectedEOF : public std::exception {
   const char *what() const throw() { return "Unexpected end of pgn file"; }
+};
+
+struct InvalidTagName : public std::exception {
+  const char *what() const throw() { return "Invalid tag name"; }
+};
+
+struct UnexpectedCharacter : public std::exception {
+  std::string msg;
+  UnexpectedCharacter(char actual, char required, int loc) {
+    std::stringstream ss;
+    ss << "Expected \'" << required << "\' at location " << loc
+       << " but read \'" << actual << "\'";
+    msg = ss.str();
+  }
+  const char *what() const throw() { return msg.c_str(); }
 };
 
 struct STRCheckFailed : public std::exception {

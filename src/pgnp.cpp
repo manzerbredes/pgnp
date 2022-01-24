@@ -239,7 +239,12 @@ int PGN::ParseNextTag(int start_loc) {
   tags[key] = value;
   tagkeys.push_back(key);
 
-  // TODO: Check that caracters if a ]
+  EOF_CHECK(valueloc + 1);
+  c = pgn_content[valueloc + 1];
+  if (c != ']') {
+    throw UnexpectedCharacter(c, ']', valueloc + 1);
+  }
+
   return (valueloc + 1); // +1 For the last char of the tag which is ']'
 }
 
@@ -247,7 +252,12 @@ HalfMove *PGN::GetMoves() { return (moves); }
 
 std::vector<std::string> PGN::GetTagList() { return tagkeys; }
 
-std::string PGN::GetTagValue(std::string key) { return tags[key]; }
+std::string PGN::GetTagValue(std::string key) {
+  if (tags.find(key) == tags.end()) {
+    throw InvalidTagName();
+  }
+  return tags[key];
+}
 
 void PGN::Dump() {
   std::cout << "---------- PGN DUMP ----------" << std::endl;
