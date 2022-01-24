@@ -9,6 +9,7 @@ set(PGNP_INCLUDE_DIR ${CMAKE_CURRENT_BINARY_DIR}/includes) # For conveniance
 set(PGNP_INCLUDE_DIR ${PGNP_INCLUDE_DIR} PARENT_SCOPE) # To be used by other projects with add_subdirectory()
 file(MAKE_DIRECTORY ${PGNP_INCLUDE_DIR})
 configure_file(src/pgnp.hpp ${PGNP_INCLUDE_DIR} COPYONLY)
+include_directories(${PGNP_INCLUDE_DIR})
 
 # Unit tests
 enable_testing()
