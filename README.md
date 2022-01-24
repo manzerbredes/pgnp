@@ -40,7 +40,8 @@ Various API calls:
     std::string tagValue=GetTagValue("Date"); // Get the value of a tag
 Access to moves:
 
-    pgnp::HalfMove *move=pgn.GetMoves(); // Get the tree of half moves
+    pgnp::HalfMove *move=new pgnp::HalfMove();
+    pgn.GetMoves(move); // Get the tree of half moves (do not forget to call "delete move")
     int length=move->GetLength(); // Get the number of half moves in the move MainLine
     // Public members:
     // move->variations contains variations of the current move

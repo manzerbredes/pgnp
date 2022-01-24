@@ -16,7 +16,7 @@
 
 namespace pgnp {
 
-HalfMove::HalfMove() : isBlack(false), MainLine(NULL) {}
+HalfMove::HalfMove() : count(-1), isBlack(false), MainLine(NULL) {}
 
 HalfMove::~HalfMove() {
   for (auto *move : variations) {
@@ -53,6 +53,26 @@ int HalfMove::GetLength() {
     m = m->MainLine;
   }
   return length;
+}
+
+void HalfMove::Copy(HalfMove* copy){
+  copy->count=count;
+  copy->isBlack=isBlack;
+  copy->move=move;
+  copy->comment=comment;
+
+  // Copy MainLine
+  if(MainLine!=NULL){
+    copy->MainLine=new HalfMove();
+    MainLine->Copy(copy->MainLine);
+  }
+
+  // Copy variation
+  for(HalfMove *var:variations){
+    HalfMove *new_var=new HalfMove();
+    copy->variations.push_back(new_var);
+    var->Copy(new_var);
+  }
 }
 
 PGN::~PGN() {
@@ -265,7 +285,7 @@ int PGN::ParseNextTag(int start_loc) {
   return (valueloc + 1); // +1 For the last char of the tag which is ']'
 }
 
-HalfMove *PGN::GetMoves() { return (moves); }
+void PGN::GetMoves(HalfMove* copy) { moves->Copy(copy);  }
 
 std::vector<std::string> PGN::GetTagList() { return tagkeys; }
 

@@ -29,6 +29,7 @@ public:
   int GetLength();
   /// @brief Dump move and all its variations
   void Dump();
+  void Copy(HalfMove* copy);
 };
 
 class PGN {
@@ -52,7 +53,7 @@ public:
   std::vector<std::string> GetTagList();
   std::string GetTagValue(std::string);
   std::string GetResult();
-  HalfMove *GetMoves();
+  void GetMoves(HalfMove*);
 
 private:
   /// @brief Populate @a tags with by parsing the one starting at location in
