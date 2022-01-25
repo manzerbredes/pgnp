@@ -151,6 +151,9 @@ int PGN::ParseHalfMove(int loc, HalfMove *hm) {
     hm->isBlack = true;
   }
 
+  // Parse comment entries (various comment could appear during HalfMove parsing)
+  loc=ParseComment(loc,hm);
+
   // Parse the HalfMove
   loc = NextNonBlank(loc);
   EOF_CHECK(loc);
@@ -163,6 +166,9 @@ int PGN::ParseHalfMove(int loc, HalfMove *hm) {
     EOF_CHECK(loc);
   }
   hm->move = move;
+
+  // Parse comment
+  loc=ParseComment(loc,hm);
 
   // Skip end of variation
   if (c == ')') {
@@ -182,6 +188,9 @@ int PGN::ParseHalfMove(int loc, HalfMove *hm) {
     hm->variations.push_back(var);
     loc++; // Skip ')'
   }
+
+  // Parse comment
+  loc=ParseComment(loc,hm);
 
   // Parse next HalfMove
   loc = NextNonBlank(loc);
