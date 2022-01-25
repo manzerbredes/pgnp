@@ -7,7 +7,7 @@
 #define IS_DIGIT(c)                                                            \
   (c == '0' || c == '1' || c == '2' || c == '3' || c == '4' || c == '5' ||     \
    c == '6' || c == '7' || c == '8' || c == '9')
-#define IS_EOF(loc) (loc >= pgn_content.size())
+#define IS_EOF(loc) ((loc) >= pgn_content.size())
 #define EOF_CHECK(loc)                                                         \
   {                                                                            \
     if (IS_EOF(loc))                                                           \
@@ -15,6 +15,8 @@
   }
 
 namespace pgnp {
+
+PGN::PGN() : LastGameEndLoc(0), moves(NULL) {}
 
 PGN::~PGN() {
   if (moves != NULL)
@@ -26,15 +28,30 @@ std::string PGN::GetResult() { return (result); }
 void PGN::FromFile(std::string filepath) {
   std::ifstream file(filepath);
 
-  std::string content((std::istreambuf_iterator<char>(file)),
+  std::string pgn_content((std::istreambuf_iterator<char>(file)),
                       std::istreambuf_iterator<char>());
-  FromString(content);
+  this->pgn_content = pgn_content;
 }
 
 void PGN::FromString(std::string pgn_content) {
   this->pgn_content = pgn_content;
+}
+
+void PGN::ParseNextGame(){
+  // Clean previous parse
+  if(moves!=NULL){
+    delete moves;
+  }
+  result="";
+  tagkeys.clear();
+  tags.clear();
+
+
   moves = new HalfMove();
-  int loc = 0;
+  int loc = NextNonBlank(LastGameEndLoc);
+  if(IS_EOF(loc)){
+    throw NoGameFound();
+  }
   while (!IS_EOF(loc)) {
     char c = pgn_content[loc];
     if (!IS_BLANK(c)) {
@@ -42,9 +59,10 @@ void PGN::FromString(std::string pgn_content) {
         loc = ParseNextTag(loc);
       } else if (IS_DIGIT(c)) {
         loc = ParseHalfMove(loc, moves);
+        LastGameEndLoc=loc+1; // Next game start 1 char after the last one
         break;
-      } else if (c=='{') {
-        loc = ParseComment(loc,moves);
+      } else if (c == '{') {
+        loc = ParseComment(loc, moves);
         continue; // No need loc++
       }
     }
@@ -89,20 +107,20 @@ int PGN::ParseComment(int loc, HalfMove *hm) {
   loc = NextNonBlank(loc);
   EOF_CHECK(loc);
   char c = pgn_content[loc];
-  
-  if(c=='{'){
+
+  if (c == '{') {
     loc++;
     EOF_CHECK(loc);
     c = pgn_content[loc];
-    while(c!='}'){
-      hm->comment+=c;
+    while (c != '}') {
+      hm->comment += c;
       loc++;
       EOF_CHECK(loc);
       c = pgn_content[loc];
     }
     loc++; // Skip '}'
   }
-  return(loc);
+  return (loc);
 }
 
 int PGN::ParseHalfMove(int loc, HalfMove *hm) {
@@ -120,11 +138,14 @@ int PGN::ParseHalfMove(int loc, HalfMove *hm) {
       } else if (nc == '-') {
         if (c == '1') {
           result = "1-0";
+          loc+=2;
         } else {
           result = "0-1";
+          loc+=2;
         }
       } else {
         result = "1/2-1/2";
+        loc+=6;
       }
       return (loc);
     }
@@ -151,8 +172,9 @@ int PGN::ParseHalfMove(int loc, HalfMove *hm) {
     hm->isBlack = true;
   }
 
-  // Parse comment entries (various comment could appear during HalfMove parsing)
-  loc=ParseComment(loc,hm);
+  // Parse comment entries (various comment could appear during HalfMove
+  // parsing)
+  loc = ParseComment(loc, hm);
 
   // Parse the HalfMove
   loc = NextNonBlank(loc);
@@ -168,7 +190,7 @@ int PGN::ParseHalfMove(int loc, HalfMove *hm) {
   hm->move = move;
 
   // Parse comment
-  loc=ParseComment(loc,hm);
+  loc = ParseComment(loc, hm);
 
   // Skip end of variation
   if (c == ')') {
@@ -177,7 +199,7 @@ int PGN::ParseHalfMove(int loc, HalfMove *hm) {
   }
 
   // Parse comment
-  loc=ParseComment(loc,hm);
+  loc = ParseComment(loc, hm);
 
   // Check for variations
   loc = NextNonBlank(loc);
@@ -190,7 +212,7 @@ int PGN::ParseHalfMove(int loc, HalfMove *hm) {
   }
 
   // Parse comment
-  loc=ParseComment(loc,hm);
+  loc = ParseComment(loc, hm);
 
   // Parse next HalfMove
   loc = NextNonBlank(loc);

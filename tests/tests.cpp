@@ -6,6 +6,7 @@ using namespace pgnp;
 TEST_CASE("Valid PGN", "[valid/pgn1]") {
   PGN pgn;
   REQUIRE_NOTHROW(pgn.FromFile("pgn_files/valid/pgn1.pgn"));
+  REQUIRE_NOTHROW(pgn.ParseNextGame());
   REQUIRE_THROWS(pgn.STRCheck());
 
   HalfMove *m = new HalfMove();
@@ -33,7 +34,7 @@ TEST_CASE("Valid PGN", "[valid/pgn1]") {
   }
 
   SECTION("Main line color checks") {
-    m=m_backup;
+    m = m_backup;
     CHECK_FALSE(m->isBlack);
 
     m = m->MainLine;
@@ -60,26 +61,42 @@ TEST_CASE("Valid PGN", "[valid/pgn1]") {
 
   CHECK(m_backup->GetHalfMoveAt(4)->move == "c4");
   CHECK(pgn.GetResult() == "*");
+  REQUIRE_THROWS_AS(pgn.ParseNextGame(),NoGameFound);
 }
 
 TEST_CASE("Valid PGN", "[valid/pgn2]") {
   PGN pgn;
   REQUIRE_NOTHROW(pgn.FromFile("pgn_files/valid/pgn2.pgn"));
+  REQUIRE_NOTHROW(pgn.ParseNextGame());
+
   REQUIRE_THROWS(pgn.STRCheck());
   HalfMove *m = new HalfMove();
   pgn.GetMoves(m);
   REQUIRE(m->GetLength() == 66);
   CHECK(pgn.GetResult() == "0-1");
   CHECK(m->comment == " A00 Hungarian Opening ");
-  CHECK(m->GetHalfMoveAt(7)->comment == " (0.22 → 0.74) Inaccuracy. dxc4 was best. ");
+  CHECK(m->GetHalfMoveAt(65)->comment == " White resigns. ");
+  CHECK(m->GetHalfMoveAt(7)->comment ==
+        " (0.22 → 0.74) Inaccuracy. dxc4 was best. ");
+
+  SECTION("Check Variations") {
+    HalfMove *var = m->GetHalfMoveAt(7)->variations[0];
+    REQUIRE(var->GetLength() == 10);
+    CHECK(var->move == "dxc4");
+    CHECK(var->GetHalfMoveAt(1)->move == "O-O");
+  }
+  REQUIRE_THROWS_AS(pgn.ParseNextGame(),NoGameFound);
 }
 
 TEST_CASE("Seven Tag Roster", "[std/pgn1]") {
   PGN pgn;
   REQUIRE_NOTHROW(pgn.FromFile("pgn_files/str/pgn1.pgn"));
+  REQUIRE_NOTHROW(pgn.ParseNextGame());
+
   REQUIRE_NOTHROW(pgn.STRCheck());
   HalfMove *m = new HalfMove();
   pgn.GetMoves(m);
   REQUIRE(m->GetLength() == 85);
   CHECK(pgn.GetResult() == "1/2-1/2");
+  REQUIRE_THROWS_AS(pgn.ParseNextGame(),NoGameFound);
 }

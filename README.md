@@ -3,6 +3,10 @@
 PGNP is a Portable Game Notation (PGN) parser. More details about the
 PGN specification can be found [here](https://www.chessclub.com/help/PGN-spec).
 
+# Features
+- Basic PGN parsing (tags, move, comments, variations etc.)
+- Merged PGN files parsing (several games in one file)
+
 # How to use it ?
 PGNP can be used as a shared library in your project.
 You only need to include `pgnp.hpp` and linking the .so file to your
@@ -17,6 +21,7 @@ Load PGN from file:
     pgnp::PGN pgn;
     try {
         pgn.FromFile("pgn.txt");
+        pgn.ParseNextGame();
     }
     catch(...){
         // Handle exceptions
@@ -24,8 +29,9 @@ Load PGN from file:
 Load PGN from string:
 
     pgnp::PGN pgn;
+    pgn.FromString("YOUR PGN CONTENT HERE");
     try {
-        pgn.FromString("YOUR PGN CONTENT HERE");
+        pgn.ParseNextGame();
     }
     catch(...){
         // Handle exceptions

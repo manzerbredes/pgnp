@@ -14,15 +14,23 @@ private:
   std::vector<std::string> tagkeys;
   /// @brief Contains game result (last PGN word)
   std::string result;
-  /// @brief COntains the parsed PGN moves
+  /// @brief Contains the parsed PGN moves
   HalfMove *moves;
   /// @brief Contains the PGN data
   std::string pgn_content;
+  /// @brief Contains the location of the end of the last parsed game (1 PGN file may have multiple games)
+  int LastGameEndLoc;
 
 public:
+  PGN();
   ~PGN();
   void FromFile(std::string);
   void FromString(std::string);
+  /**
+   * Parse the next available game. Note that it raises a @a NoGameFound exception if no more game is available.
+   * A call to this method flush all the last parsed game data. Be careful.
+   */
+  void ParseNextGame();
   /// @brief Check if PGN contains a specific tag
   bool HasTag(std::string);
   /// @brief Perform a Seven Tag Roster compliance check
@@ -60,6 +68,10 @@ struct InvalidTagName : public std::exception {
 
 struct InvalidGameResult : public std::exception {
   const char *what() const throw() { return "Invalid game result"; }
+};
+
+struct NoGameFound : public std::exception {
+  const char *what() const throw() { return "No game (or more game) found"; }
 };
 
 struct UnexpectedCharacter : public std::exception {
