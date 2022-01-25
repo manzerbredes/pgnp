@@ -26,30 +26,30 @@ PGN::~PGN() {
 std::string PGN::GetResult() { return (result); }
 
 void PGN::FromFile(std::string filepath) {
-  std::ifstream file(filepath);
+  std::ifstream inFile;
+  inFile.open(filepath);
+  std::stringstream strStream;
+  strStream << inFile.rdbuf();
 
-  std::string pgn_content((std::istreambuf_iterator<char>(file)),
-                      std::istreambuf_iterator<char>());
-  this->pgn_content = pgn_content;
+  this->pgn_content = strStream.str();
 }
 
 void PGN::FromString(std::string pgn_content) {
   this->pgn_content = pgn_content;
 }
 
-void PGN::ParseNextGame(){
+void PGN::ParseNextGame() {
   // Clean previous parse
-  if(moves!=NULL){
+  if (moves != NULL) {
     delete moves;
   }
-  result="";
+  result = "";
   tagkeys.clear();
   tags.clear();
 
-
   moves = new HalfMove();
   int loc = NextNonBlank(LastGameEndLoc);
-  if(IS_EOF(loc)){
+  if (IS_EOF(loc)) {
     throw NoGameFound();
   }
   while (!IS_EOF(loc)) {
@@ -59,7 +59,7 @@ void PGN::ParseNextGame(){
         loc = ParseNextTag(loc);
       } else if (IS_DIGIT(c)) {
         loc = ParseHalfMove(loc, moves);
-        LastGameEndLoc=loc+1; // Next game start 1 char after the last one
+        LastGameEndLoc = loc + 1; // Next game start 1 char after the last one
         break;
       } else if (c == '{') {
         loc = ParseComment(loc, moves);
@@ -138,14 +138,14 @@ int PGN::ParseHalfMove(int loc, HalfMove *hm) {
       } else if (nc == '-') {
         if (c == '1') {
           result = "1-0";
-          loc+=2;
+          loc += 2;
         } else {
           result = "0-1";
-          loc+=2;
+          loc += 2;
         }
       } else {
         result = "1/2-1/2";
-        loc+=6;
+        loc += 6;
       }
       return (loc);
     }
