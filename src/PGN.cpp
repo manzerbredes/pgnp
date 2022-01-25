@@ -16,65 +16,6 @@
 
 namespace pgnp {
 
-HalfMove::HalfMove() : count(-1), isBlack(false), MainLine(NULL) {}
-
-HalfMove::~HalfMove() {
-  for (auto *move : variations) {
-    delete move;
-  }
-}
-
-void HalfMove::NestedDump(HalfMove *m, int indent) {
-  for (int i = 0; i < indent; i++) {
-    std::cout << "   ";
-  }
-  std::cout << "  "
-            << " Move=" << m->move << " Count=" << m->count << " Comment=\""
-            << m->comment << "\""
-            << " IsBlack=" << m->isBlack
-            << " Variations=" << m->variations.size() << std::endl;
-
-  for (auto *var : m->variations) {
-    NestedDump(var, indent + 1);
-  }
-
-  if (m->MainLine != NULL) {
-    NestedDump(m->MainLine, indent);
-  }
-}
-
-void HalfMove::Dump() { NestedDump(this, 0); }
-
-int HalfMove::GetLength() {
-  int length = 0;
-  HalfMove *m = this;
-  while (m != NULL) {
-    length++;
-    m = m->MainLine;
-  }
-  return length;
-}
-
-void HalfMove::Copy(HalfMove* copy){
-  copy->count=count;
-  copy->isBlack=isBlack;
-  copy->move=move;
-  copy->comment=comment;
-
-  // Copy MainLine
-  if(MainLine!=NULL){
-    copy->MainLine=new HalfMove();
-    MainLine->Copy(copy->MainLine);
-  }
-
-  // Copy variation
-  for(HalfMove *var:variations){
-    HalfMove *new_var=new HalfMove();
-    copy->variations.push_back(new_var);
-    var->Copy(new_var);
-  }
-}
-
 PGN::~PGN() {
   if (moves != NULL)
     delete moves;
@@ -101,7 +42,7 @@ void PGN::FromString(std::string pgn_content) {
         loc = ParseNextTag(loc);
       } else if (IS_DIGIT(c)) {
         moves = new HalfMove();
-        loc = ParseLine(loc, moves);
+        loc = ParseHalfMove(loc, moves);
         break;
       }
     }
@@ -141,7 +82,7 @@ bool PGN::HasTag(std::string key) {
   return (std::find(tags.begin(), tags.end(), key) != tags.end());
 }
 
-int PGN::ParseLine(int loc, HalfMove *hm) {
+int PGN::ParseHalfMove(int loc, HalfMove *hm) {
   // Goto next char
   loc = NextNonBlank(loc);
   EOF_CHECK(loc);
@@ -225,7 +166,7 @@ int PGN::ParseLine(int loc, HalfMove *hm) {
   while (!IS_EOF(loc) && pgn_content[loc] == '(') {
     loc++; // Skip '('
     HalfMove *var = new HalfMove;
-    loc = ParseLine(loc, var);
+    loc = ParseHalfMove(loc, var);
     hm->variations.push_back(var);
     loc++; // Skip ')'
   }
@@ -235,7 +176,7 @@ int PGN::ParseLine(int loc, HalfMove *hm) {
   if (!IS_EOF(loc)) {
     HalfMove *next_hm = new HalfMove;
     next_hm->count = hm->count;
-    loc = ParseLine(loc, next_hm);
+    loc = ParseHalfMove(loc, next_hm);
     // Check if move parsed successfuly
     if (next_hm->move.size() > 0) {
       hm->MainLine = next_hm;
@@ -285,7 +226,7 @@ int PGN::ParseNextTag(int start_loc) {
   return (valueloc + 1); // +1 For the last char of the tag which is ']'
 }
 
-void PGN::GetMoves(HalfMove* copy) { moves->Copy(copy);  }
+void PGN::GetMoves(HalfMove *copy) { moves->Copy(copy); }
 
 std::vector<std::string> PGN::GetTagList() { return tagkeys; }
 
@@ -296,16 +237,18 @@ std::string PGN::GetTagValue(std::string key) {
   return tags[key];
 }
 
-void PGN::Dump() {
-  std::cout << "---------- PGN DUMP ----------" << std::endl;
-  std::cout << "Tags:" << std::endl;
+std::string PGN::Dump() {
+  std::stringstream ss;
+  ss << "---------- PGN DUMP ----------" << std::endl;
+  ss << "Tags:" << std::endl;
   for (auto &tag : GetTagList()) {
-    std::cout << "  " << tag << "=" << GetTagValue(tag) << std::endl;
+    ss << "  " << tag << "=" << GetTagValue(tag) << std::endl;
   }
-  std::cout << "Moves:" << std::endl;
+  ss << "Moves:" << std::endl;
 
   if (moves != NULL)
-    moves->Dump();
+    ss << moves->Dump();
+  return (ss.str());
 }
 
 int PGN::NextNonBlank(int loc) {

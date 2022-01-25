@@ -1,70 +1,52 @@
+#include "HalfMove.hpp"
 #include <algorithm>
 #include <exception>
 #include <fstream>
-#include <iostream>
-#include <sstream>
-#include <streambuf>
-#include <string>
 #include <unordered_map>
-#include <vector>
 
 namespace pgnp {
 
-class HalfMove {
-private:
-  /// @brief Recursive dump
-  void NestedDump(HalfMove *, int);
-
-public:
-  int count;
-  bool isBlack;
-  std::string move;
-  std::string comment;
-  HalfMove *MainLine;
-  std::vector<HalfMove *> variations;
-
-  HalfMove();
-  ~HalfMove();
-  /// @brief Get number of HalfMove in the MailLine
-  int GetLength();
-  /// @brief Dump move and all its variations
-  void Dump();
-  void Copy(HalfMove* copy);
-};
-
 class PGN {
 private:
+  /// @brief Contains tags data
   std::unordered_map<std::string, std::string> tags;
+  /// @brief Contains the tags list in parsed order
   std::vector<std::string> tagkeys;
+  /// @brief Contains game result (last PGN word)
   std::string result;
-
+  /// @brief COntains the parsed PGN moves
   HalfMove *moves;
+  /// @brief Contains the PGN data
   std::string pgn_content;
 
 public:
   ~PGN();
   void FromFile(std::string);
   void FromString(std::string);
+  /// @brief Check if PGN contains a specific tag
   bool HasTag(std::string);
   /// @brief Perform a Seven Tag Roster compliance check
   void STRCheck();
-  /// @brief Dump parsed PGN
-  void Dump();
+  /// @brief Dump parsed PGN into a string
+  std::string Dump();
+  /// @brief Retrieve parsed tag list
   std::vector<std::string> GetTagList();
+  /// @brief Access to the value of a tag
   std::string GetTagValue(std::string);
+  /// @brief Get game result based on the last PGN word
   std::string GetResult();
-  void GetMoves(HalfMove*);
+  /// @brief Fetch PGN moves as HalfMove structure
+  void GetMoves(HalfMove *);
 
 private:
   /// @brief Populate @a tags with by parsing the one starting at location in
   /// argument
   int ParseNextTag(int);
-
   /// @brief Get the next non-blank char location starting from location in
   /// argument
   int NextNonBlank(int);
-
-  int ParseLine(int, HalfMove *);
+  /// @brief Parse a HalfMove at a specific location into @a pgn_content
+  int ParseHalfMove(int, HalfMove *);
 };
 
 struct UnexpectedEOF : public std::exception {
