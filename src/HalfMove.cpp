@@ -63,4 +63,17 @@ void HalfMove::Copy(HalfMove *copy) {
     var->Copy(new_var);
   }
 }
+
+HalfMove *HalfMove::GetHalfMoveAt(int distance) {
+  HalfMove *tmp=this;
+  while(distance>0){
+    if(tmp==NULL){
+      throw HalfMoveOutOfRange();
+    }
+    distance--;
+    tmp=tmp->MainLine;
+  }
+  return(tmp);
+}
+
 } // namespace pgnp

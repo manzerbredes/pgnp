@@ -58,6 +58,7 @@ TEST_CASE("Valid PGN", "[valid/pgn1]") {
     CHECK_THROWS_AS(pgn.GetTagValue("InvalidTagName"), InvalidTagName);
   }
 
+  CHECK(m_backup->GetHalfMoveAt(4)->move == "c4");
   CHECK(pgn.GetResult() == "*");
 }
 
@@ -69,6 +70,8 @@ TEST_CASE("Valid PGN", "[valid/pgn2]") {
   pgn.GetMoves(m);
   REQUIRE(m->GetLength() == 66);
   CHECK(pgn.GetResult() == "0-1");
+  CHECK(m->comment == " A00 Hungarian Opening ");
+  CHECK(m->GetHalfMoveAt(7)->comment == " (0.22 → 0.74) Inaccuracy. dxc4 was best. ");
 }
 
 TEST_CASE("Seven Tag Roster", "[std/pgn1]") {

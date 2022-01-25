@@ -34,5 +34,11 @@ public:
   std::string Dump();
   /// @brief Perform a deep copy of a HalfMove
   void Copy(HalfMove *copy);
+  /// @brief Get HalfMove located x down the MainLine 
+  HalfMove* GetHalfMoveAt(int);
+};
+
+struct HalfMoveOutOfRange : public std::exception {
+  const char *what() const throw() { return "HalfMove distance is out of range"; }
 };
 } // namespace pgnp

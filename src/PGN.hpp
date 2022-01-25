@@ -47,6 +47,7 @@ private:
   int NextNonBlank(int);
   /// @brief Parse a HalfMove at a specific location into @a pgn_content
   int ParseHalfMove(int, HalfMove *);
+  int ParseComment(int,HalfMove *);
 };
 
 struct UnexpectedEOF : public std::exception {

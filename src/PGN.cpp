@@ -33,7 +33,7 @@ void PGN::FromFile(std::string filepath) {
 
 void PGN::FromString(std::string pgn_content) {
   this->pgn_content = pgn_content;
-  moves = NULL;
+  moves = new HalfMove();
   int loc = 0;
   while (!IS_EOF(loc)) {
     char c = pgn_content[loc];
@@ -41,9 +41,11 @@ void PGN::FromString(std::string pgn_content) {
       if (c == '[') {
         loc = ParseNextTag(loc);
       } else if (IS_DIGIT(c)) {
-        moves = new HalfMove();
         loc = ParseHalfMove(loc, moves);
         break;
+      } else if (c=='{') {
+        loc = ParseComment(loc,moves);
+        continue; // No need loc++
       }
     }
     loc++;
@@ -80,6 +82,27 @@ void PGN::STRCheck() {
 bool PGN::HasTag(std::string key) {
   auto tags = GetTagList();
   return (std::find(tags.begin(), tags.end(), key) != tags.end());
+}
+
+int PGN::ParseComment(int loc, HalfMove *hm) {
+  // Goto next char
+  loc = NextNonBlank(loc);
+  EOF_CHECK(loc);
+  char c = pgn_content[loc];
+  
+  if(c=='{'){
+    loc++;
+    EOF_CHECK(loc);
+    c = pgn_content[loc];
+    while(c!='}'){
+      hm->comment+=c;
+      loc++;
+      EOF_CHECK(loc);
+      c = pgn_content[loc];
+    }
+    loc++; // Skip '}'
+  }
+  return(loc);
 }
 
 int PGN::ParseHalfMove(int loc, HalfMove *hm) {
@@ -147,19 +170,8 @@ int PGN::ParseHalfMove(int loc, HalfMove *hm) {
     return (loc);
   }
 
-  // Check for comment
-  loc = NextNonBlank(loc);
-  if (!IS_EOF(loc) && pgn_content[loc] == '{') {
-    loc++; // Skip '{'
-    c = pgn_content[loc];
-    while (c != '}') {
-      hm->comment += c;
-      loc++;
-      EOF_CHECK(loc);
-      c = pgn_content[loc];
-    }
-    loc++; // Skip '}'
-  }
+  // Parse comment
+  loc=ParseComment(loc,hm);
 
   // Check for variations
   loc = NextNonBlank(loc);
