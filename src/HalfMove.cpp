@@ -50,6 +50,7 @@ void HalfMove::Copy(HalfMove *copy) {
   copy->isBlack = isBlack;
   copy->move = move;
   copy->comment = comment;
+  copy->NAG = NAG;
 
   // Copy MainLine
   if (MainLine != NULL) {
