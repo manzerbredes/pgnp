@@ -11,6 +11,7 @@ file(MAKE_DIRECTORY ${PGNP_INCLUDE_DIR})
 configure_file(src/PGN.hpp ${PGNP_INCLUDE_DIR}/pgnp.hpp COPYONLY)
 configure_file(src/HalfMove.hpp ${PGNP_INCLUDE_DIR} COPYONLY)
 configure_file(src/LargeFileStream.hpp ${PGNP_INCLUDE_DIR} COPYONLY)
+configure_file(src/Types.hpp ${PGNP_INCLUDE_DIR} COPYONLY)
 
 include_directories(${PGNP_INCLUDE_DIR})
 

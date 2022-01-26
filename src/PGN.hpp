@@ -1,5 +1,8 @@
+#pragma once
+
 #include "HalfMove.hpp"
 #include "LargeFileStream.hpp"
+#include "Types.hpp"
 #include <algorithm>
 #include <exception>
 #include <fstream>
@@ -21,7 +24,7 @@ private:
   LargeFileStream pgn_content;
   /// @brief Contains the location of the end of the last parsed game (1 PGN
   /// file may have multiple games)
-  long LastGameEndLoc;
+  ull LastGameEndLoc;
 
 public:
   PGN();
@@ -52,16 +55,16 @@ public:
 private:
   /// @brief Populate @a tags with by parsing the one starting at location in
   /// argument
-  long ParseNextTag(long);
+  ull ParseNextTag(ull);
   /// @brief Parse a HalfMove at a specific location into @a pgn_content
-  long ParseHalfMove(long, HalfMove *);
+  ull ParseHalfMove(ull, HalfMove *);
   /// @brief Parse a consecutive sequence of comment
-  long ParseComment(long, HalfMove *);
+  ull ParseComment(ull, HalfMove *);
   /// @brief Get the next non-blank char location ignoring line comments ('%'
   /// and ';')
-  long GotoNextToken(long);
+  ull GotoNextToken(ull);
   /// @brief Goto the end of the current line
-  long GotoEOL(long);
+  ull GotoEOL(ull);
 };
 
 struct UnexpectedEOF : public std::exception {
@@ -82,7 +85,7 @@ struct NoGameFound : public std::exception {
 
 struct UnexpectedCharacter : public std::exception {
   std::string msg;
-  UnexpectedCharacter(char actual, char required, long loc) {
+  UnexpectedCharacter(char actual, char required, ull loc) {
     std::stringstream ss;
     ss << "Expected \'" << required << "\' at location " << loc
        << " but read \'" << actual << "\'";
