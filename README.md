@@ -1,4 +1,4 @@
-![pipeline](https://gitlab.com/manzerbredes/pgnp/badges/master/pipeline.svg)
+[![pipeline](https://gitlab.com/manzerbredes/pgnp/badges/master/pipeline.svg)](https://gitlab.com/manzerbredes/pgnp/-/commits/master)
 [![license](https://img.shields.io/badge/License-LGPL_v3-blue.svg)](https://www.gnu.org/licenses/lgpl-3.0)
 
 ## PGNP: PGN Parser
