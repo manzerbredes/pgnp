@@ -1,3 +1,5 @@
+![pipeline](https://gitlab.com/manzerbredes/pgnp/badges/master/pipeline.svg)
+
 ## PGNP: PGN Parser
 
 PGNP is a Portable Game Notation (PGN) parser. More details about the
