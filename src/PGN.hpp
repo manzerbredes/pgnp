@@ -24,7 +24,7 @@ private:
   LargeFileStream pgn_content;
   /// @brief Contains the location of the end of the last parsed game (1 PGN
   /// file may have multiple games)
-  ull LastGameEndLoc;
+  loctype LastGameEndLoc;
 
 public:
   PGN();
@@ -55,16 +55,16 @@ public:
 private:
   /// @brief Populate @a tags with by parsing the one starting at location in
   /// argument
-  ull ParseNextTag(ull);
+  loctype ParseNextTag(loctype);
   /// @brief Parse a HalfMove at a specific location into @a pgn_content
-  ull ParseHalfMove(ull, HalfMove *);
+  loctype ParseHalfMove(loctype, HalfMove *);
   /// @brief Parse a consecutive sequence of comment
-  ull ParseComment(ull, HalfMove *);
+  loctype ParseComment(loctype, HalfMove *);
   /// @brief Get the next non-blank char location ignoring line comments ('%'
   /// and ';')
-  ull GotoNextToken(ull);
+  loctype GotoNextToken(loctype);
   /// @brief Goto the end of the current line
-  ull GotoEOL(ull);
+  loctype GotoEOL(loctype);
 };
 
 struct UnexpectedEOF : public std::exception {
@@ -85,7 +85,7 @@ struct NoGameFound : public std::exception {
 
 struct UnexpectedCharacter : public std::exception {
   std::string msg;
-  UnexpectedCharacter(char actual, char required, ull loc) {
+  UnexpectedCharacter(char actual, char required, loctype loc) {
     std::stringstream ss;
     ss << "Expected \'" << required << "\' at location " << loc
        << " but read \'" << actual << "\'";

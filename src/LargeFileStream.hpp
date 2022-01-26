@@ -16,11 +16,11 @@ class LargeFileStream {
   /// @brief In memory buffer
   char buffer[BUFFER_SIZE];
   /// @brief Number of chuck read minus 1
-  ull chuck_count;
+  loctype chuck_count;
   /// @brief Number of byte read during the last file access
-  ull last_read_size;
+  loctype last_read_size;
   /// @brief Keep track of the file offset (to prevent backward read)
-  ull last_loc;
+  loctype last_loc;
   /// @brief Use a string as file content
   std::string content;
   /// @brief Use to shortcut some methods
@@ -37,7 +37,7 @@ public:
   /// @brief Emulate file access with a string
   void FromString(std::string content);
   /// @brief Allow array like access to the file
-  char operator[](ull loc);
+  char operator[](loctype loc);
   /// @brief Check if we reach the EOF
   bool IsEOF();
 

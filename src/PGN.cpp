@@ -45,7 +45,7 @@ void PGN::ParseNextGame() {
   if (IS_EOF) {
     throw NoGameFound();
   }
-  ull loc = GotoNextToken(LastGameEndLoc);
+  loctype loc = GotoNextToken(LastGameEndLoc);
   if (IS_EOF) {
     throw NoGameFound();
   }
@@ -103,7 +103,7 @@ bool PGN::HasTag(std::string key) {
   return (std::find(tags.begin(), tags.end(), key) != tags.end());
 }
 
-ull PGN::ParseComment(ull loc, HalfMove *hm) {
+loctype PGN::ParseComment(loctype loc, HalfMove *hm) {
   // Goto next char
   loc = GotoNextToken(loc);
   EOF_CHECK(loc);
@@ -131,7 +131,7 @@ ull PGN::ParseComment(ull loc, HalfMove *hm) {
   return (loc);
 }
 
-ull PGN::ParseHalfMove(ull loc, HalfMove *hm) {
+loctype PGN::ParseHalfMove(loctype loc, HalfMove *hm) {
   // Goto next char
   loc = GotoNextToken(loc);
   EOF_CHECK(loc);
@@ -249,10 +249,10 @@ ull PGN::ParseHalfMove(ull loc, HalfMove *hm) {
   return (loc);
 }
 
-ull PGN::ParseNextTag(ull start_loc) {
+loctype PGN::ParseNextTag(loctype start_loc) {
   // Parse key
   std::string key;
-  ull keyloc = start_loc + 1;
+  loctype keyloc = start_loc + 1;
   EOF_CHECK(keyloc);
   char c = pgn_content[keyloc];
   while (!IS_BLANK(c)) {
@@ -264,7 +264,7 @@ ull PGN::ParseNextTag(ull start_loc) {
 
   // Parse value
   std::string value;
-  ull valueloc = GotoNextToken(keyloc) + 1;
+  loctype valueloc = GotoNextToken(keyloc) + 1;
   EOF_CHECK(keyloc);
   c = pgn_content[valueloc];
   while (c != '"' or IS_EOF) {
@@ -312,7 +312,7 @@ std::string PGN::Dump() {
   return (ss.str());
 }
 
-ull PGN::GotoNextToken(ull loc) {
+loctype PGN::GotoNextToken(loctype loc) {
   char c = pgn_content[loc];
   while (IS_BLANK(c)) {
     loc++;
@@ -331,7 +331,7 @@ ull PGN::GotoNextToken(ull loc) {
   return (loc);
 }
 
-ull PGN::GotoEOL(ull loc) {
+loctype PGN::GotoEOL(loctype loc) {
   char c = pgn_content[loc];
   while (true) {
     loc++;

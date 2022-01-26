@@ -23,7 +23,7 @@ void LargeFileStream::ReadNextChunk() {
   last_read_size = file.gcount();
 }
 
-char LargeFileStream::operator[](ull loc) {
+char LargeFileStream::operator[](loctype loc) {
   // Perform various checks
   if (eof) {
     throw ReadToFar();
@@ -42,11 +42,11 @@ char LargeFileStream::operator[](ull loc) {
   }
 
   // Goto the right memory chuck
-  ull loc_chunk_count = loc / BUFFER_SIZE;
+  loctype loc_chunk_count = loc / BUFFER_SIZE;
   while (chuck_count < loc_chunk_count) {
     ReadNextChunk();
   }
-  ull offset = loc - (loc_chunk_count * BUFFER_SIZE);
+  loctype offset = loc - (loc_chunk_count * BUFFER_SIZE);
   
   // Ensure for EOF
   if (!file && offset >= last_read_size) {
