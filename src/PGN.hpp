@@ -53,13 +53,15 @@ private:
   /// @brief Populate @a tags with by parsing the one starting at location in
   /// argument
   long ParseNextTag(long);
-  /// @brief Get the next non-blank char location starting from location in
-  /// argument
-  long NextNonBlank(long);
   /// @brief Parse a HalfMove at a specific location into @a pgn_content
   long ParseHalfMove(long, HalfMove *);
   /// @brief Parse a consecutive sequence of comment
   long ParseComment(long, HalfMove *);
+  /// @brief Get the next non-blank char location ignoring line comments ('%'
+  /// and ';')
+  long GotoNextToken(long);
+  /// @brief Goto the end of the current line
+  long GotoEOL(long);
 };
 
 struct UnexpectedEOF : public std::exception {

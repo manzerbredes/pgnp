@@ -10,7 +10,7 @@
 #define IS_EOF (pgn_content.IsEOF())
 #define EOF_CHECK(loc)                                                         \
   {                                                                            \
-    if (IS_EOF)                                                           \
+    if (IS_EOF)                                                                \
       throw UnexpectedEOF();                                                   \
   }
 
@@ -45,7 +45,7 @@ void PGN::ParseNextGame() {
   if (IS_EOF) {
     throw NoGameFound();
   }
-  long loc = NextNonBlank(LastGameEndLoc);
+  long loc = GotoNextToken(LastGameEndLoc);
   if (IS_EOF) {
     throw NoGameFound();
   }
@@ -62,6 +62,8 @@ void PGN::ParseNextGame() {
       } else if (c == '{') {
         loc = ParseComment(loc, moves);
         continue; // No need loc++
+      } else if (c == '%' || c == ';') {
+        loc = GotoEOL(loc);
       }
     }
     loc++;
@@ -103,7 +105,7 @@ bool PGN::HasTag(std::string key) {
 
 long PGN::ParseComment(long loc, HalfMove *hm) {
   // Goto next char
-  loc = NextNonBlank(loc);
+  loc = GotoNextToken(loc);
   EOF_CHECK(loc);
   char c = pgn_content[loc];
 
@@ -121,8 +123,8 @@ long PGN::ParseComment(long loc, HalfMove *hm) {
     loc++; // Skip '}'
 
     // Goto next non blank to look for another comment token
-    loc = NextNonBlank(loc);
-    if(!IS_EOF){
+    loc = GotoNextToken(loc);
+    if (!IS_EOF) {
       c = pgn_content[loc];
     }
   }
@@ -131,7 +133,7 @@ long PGN::ParseComment(long loc, HalfMove *hm) {
 
 long PGN::ParseHalfMove(long loc, HalfMove *hm) {
   // Goto next char
-  loc = NextNonBlank(loc);
+  loc = GotoNextToken(loc);
   EOF_CHECK(loc);
   char c = pgn_content[loc];
 
@@ -176,7 +178,7 @@ long PGN::ParseHalfMove(long loc, HalfMove *hm) {
   }
 
   // Parse the HalfMove
-  loc = NextNonBlank(loc);
+  loc = GotoNextToken(loc);
   EOF_CHECK(loc);
   c = pgn_content[loc];
   std::string move;
@@ -189,7 +191,7 @@ long PGN::ParseHalfMove(long loc, HalfMove *hm) {
   hm->move = move;
 
   // Check for NAG
-  loc = NextNonBlank(loc);
+  loc = GotoNextToken(loc);
   EOF_CHECK(loc);
   c = pgn_content[loc];
   if (c == '$') {
@@ -209,7 +211,7 @@ long PGN::ParseHalfMove(long loc, HalfMove *hm) {
   loc = ParseComment(loc, hm);
 
   // Check for variations
-  loc = NextNonBlank(loc);
+  loc = GotoNextToken(loc);
   while (!IS_EOF && pgn_content[loc] == '(') {
     loc++; // Skip '('
     HalfMove *var = new HalfMove;
@@ -217,13 +219,13 @@ long PGN::ParseHalfMove(long loc, HalfMove *hm) {
     hm->variations.push_back(var);
     loc++; // Skip ')'
     // Goto next var
-    loc = NextNonBlank(loc);
+    loc = GotoNextToken(loc);
     EOF_CHECK(loc);
     c = pgn_content[loc];
   }
 
   // Skip end of variation
-  loc = NextNonBlank(loc);
+  loc = GotoNextToken(loc);
   EOF_CHECK(loc);
   c = pgn_content[loc];
   if (c == ')') {
@@ -231,7 +233,7 @@ long PGN::ParseHalfMove(long loc, HalfMove *hm) {
   }
 
   // Parse next HalfMove
-  loc = NextNonBlank(loc);
+  loc = GotoNextToken(loc);
   if (!IS_EOF) {
     HalfMove *next_hm = new HalfMove;
     next_hm->count = hm->count;
@@ -262,7 +264,7 @@ long PGN::ParseNextTag(long start_loc) {
 
   // Parse value
   std::string value;
-  long valueloc = NextNonBlank(keyloc) + 1;
+  long valueloc = GotoNextToken(keyloc) + 1;
   EOF_CHECK(keyloc);
   c = pgn_content[valueloc];
   while (c != '"' or IS_EOF) {
@@ -310,7 +312,7 @@ std::string PGN::Dump() {
   return (ss.str());
 }
 
-long PGN::NextNonBlank(long loc) {
+long PGN::GotoNextToken(long loc) {
   char c = pgn_content[loc];
   while (IS_BLANK(c)) {
     loc++;
@@ -318,9 +320,29 @@ long PGN::NextNonBlank(long loc) {
       return (loc);
     }
     c = pgn_content[loc];
+    if (c == '%' || c == ';') {
+      loc = GotoEOL(loc);
+      if (IS_EOF) {
+        return (loc);
+      }
+    }
   }
 
   return (loc);
+}
+
+long PGN::GotoEOL(long loc) {
+  char c = pgn_content[loc];
+  while (true) {
+    loc++;
+    if (IS_EOF) {
+      return (loc);
+    }
+    c = pgn_content[loc];
+    if (c == '\n') {
+      return (loc);
+    }
+  }
 }
 
 } // namespace pgnp
