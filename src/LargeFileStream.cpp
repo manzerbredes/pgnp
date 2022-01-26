@@ -58,6 +58,6 @@ char LargeFileStream::operator[](long loc) {
   return buffer[offset];
 }
 
-bool LargeFileStream::IsEOF(long loc) { return (eof); }
+bool LargeFileStream::IsEOF() { return (eof); }
 
 } // namespace pgnp

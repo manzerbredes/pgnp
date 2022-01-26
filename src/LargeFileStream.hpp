@@ -36,7 +36,7 @@ public:
   /// @brief Allow array like access to the file
   char operator[](long loc);
   /// @brief Check if we reach the EOF
-  bool IsEOF(long loc);
+  bool IsEOF();
 
   // Various Exceptions
   struct BackwardRead : public std::exception {

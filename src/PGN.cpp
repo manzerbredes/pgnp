@@ -3,14 +3,14 @@
 #include <iostream>
 #include <string>
 
-#define IS_BLANK(c) (c == ' ' || c == '\n' || c == '\t')
+#define IS_BLANK(c) (c == ' ' || c == '\n' || c == '\t' || c == '\r')
 #define IS_DIGIT(c)                                                            \
   (c == '0' || c == '1' || c == '2' || c == '3' || c == '4' || c == '5' ||     \
    c == '6' || c == '7' || c == '8' || c == '9')
-#define IS_EOF(loc) (pgn_content.IsEOF(loc))
+#define IS_EOF (pgn_content.IsEOF())
 #define EOF_CHECK(loc)                                                         \
   {                                                                            \
-    if (IS_EOF(loc))                                                           \
+    if (IS_EOF)                                                           \
       throw UnexpectedEOF();                                                   \
   }
 
@@ -42,17 +42,16 @@ void PGN::ParseNextGame() {
   moves = new HalfMove();
 
   // Search for new game
-  if (IS_EOF(LastGameEndLoc)) {
+  if (IS_EOF) {
     throw NoGameFound();
   }
   int loc = NextNonBlank(LastGameEndLoc);
-
-  if (IS_EOF(loc)) {
+  if (IS_EOF) {
     throw NoGameFound();
   }
 
   // Parse game
-  while (!IS_EOF(loc)) {
+  while (!IS_EOF) {
     char c = pgn_content[loc];
     if (!IS_BLANK(c)) {
       if (c == '[') {
@@ -108,7 +107,8 @@ long PGN::ParseComment(long loc, HalfMove *hm) {
   EOF_CHECK(loc);
   char c = pgn_content[loc];
 
-  if (c == '{') {
+  // Parse a sequence of comment
+  while (!IS_EOF && c == '{') {
     loc++;
     EOF_CHECK(loc);
     c = pgn_content[loc];
@@ -119,6 +119,12 @@ long PGN::ParseComment(long loc, HalfMove *hm) {
       c = pgn_content[loc];
     }
     loc++; // Skip '}'
+
+    // Goto next non blank to look for another comment token
+    loc = NextNonBlank(loc);
+    if(!IS_EOF){
+      c = pgn_content[loc];
+    }
   }
   return (loc);
 }
@@ -204,7 +210,7 @@ long PGN::ParseHalfMove(long loc, HalfMove *hm) {
 
   // Check for variations
   loc = NextNonBlank(loc);
-  while (!IS_EOF(loc) && pgn_content[loc] == '(') {
+  while (!IS_EOF && pgn_content[loc] == '(') {
     loc++; // Skip '('
     HalfMove *var = new HalfMove;
     loc = ParseHalfMove(loc, var);
@@ -226,7 +232,7 @@ long PGN::ParseHalfMove(long loc, HalfMove *hm) {
 
   // Parse next HalfMove
   loc = NextNonBlank(loc);
-  if (!IS_EOF(loc)) {
+  if (!IS_EOF) {
     HalfMove *next_hm = new HalfMove;
     next_hm->count = hm->count;
     loc = ParseHalfMove(loc, next_hm);
@@ -259,7 +265,7 @@ long PGN::ParseNextTag(long start_loc) {
   long valueloc = NextNonBlank(keyloc) + 1;
   EOF_CHECK(keyloc);
   c = pgn_content[valueloc];
-  while (c != '"' or IS_EOF(valueloc)) {
+  while (c != '"' or IS_EOF) {
     value += c;
     valueloc++;
     EOF_CHECK(keyloc);
@@ -308,7 +314,7 @@ long PGN::NextNonBlank(long loc) {
   char c = pgn_content[loc];
   while (IS_BLANK(c)) {
     loc++;
-    if (IS_EOF(loc)) {
+    if (IS_EOF) {
       return (loc);
     }
     c = pgn_content[loc];

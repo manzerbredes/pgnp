@@ -58,6 +58,7 @@ private:
   long NextNonBlank(long);
   /// @brief Parse a HalfMove at a specific location into @a pgn_content
   long ParseHalfMove(long, HalfMove *);
+  /// @brief Parse a consecutive sequence of comment
   long ParseComment(long, HalfMove *);
 };
 
