@@ -5,8 +5,6 @@
 #include <iostream>
 #include <string>
 
-#define BUFFER_SIZE (1024 * 1024 / 2)
-
 namespace pgnp {
 using namespace std;
 
@@ -14,7 +12,7 @@ class LargeFileStream {
   /// @brief File to load
   ifstream file;
   /// @brief In memory buffer
-  char buffer[BUFFER_SIZE];
+  char buffer[FILE_BUFFER_SIZE];
   /// @brief Number of chuck read minus 1
   loctype chuck_count;
   /// @brief Number of byte read during the last file access

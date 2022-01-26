@@ -19,7 +19,7 @@ void LargeFileStream::FromString(std::string content) {
 
 void LargeFileStream::ReadNextChunk() {
   chuck_count++;
-  file.read(buffer, BUFFER_SIZE);
+  file.read(buffer, FILE_BUFFER_SIZE);
   last_read_size = file.gcount();
 }
 
@@ -42,11 +42,11 @@ char LargeFileStream::operator[](loctype loc) {
   }
 
   // Goto the right memory chuck
-  loctype loc_chunk_count = loc / BUFFER_SIZE;
+  loctype loc_chunk_count = loc / FILE_BUFFER_SIZE;
   while (chuck_count < loc_chunk_count) {
     ReadNextChunk();
   }
-  loctype offset = loc - (loc_chunk_count * BUFFER_SIZE);
+  loctype offset = loc - (loc_chunk_count * FILE_BUFFER_SIZE);
   
   // Ensure for EOF
   if (!file && offset >= last_read_size) {
