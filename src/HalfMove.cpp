@@ -19,8 +19,8 @@ std::string HalfMove::NestedDump(HalfMove *m, int indent) {
   ss << "  "
      << " Move=" << m->move << " Count=" << m->count << " Comment=\""
      << m->comment << "\""
-     << " IsBlack=" << m->isBlack << " Variations=" << m->variations.size()
-     << std::endl;
+     << " NAG=" << m->NAG << " IsBlack=" << m->isBlack
+     << " Variations=" << m->variations.size() << std::endl;
 
   for (auto *var : m->variations) {
     ss << NestedDump(var, indent + 1);
@@ -65,15 +65,15 @@ void HalfMove::Copy(HalfMove *copy) {
 }
 
 HalfMove *HalfMove::GetHalfMoveAt(int distance) {
-  HalfMove *tmp=this;
-  while(distance>0){
-    if(tmp==NULL){
+  HalfMove *tmp = this;
+  while (distance > 0) {
+    if (tmp == NULL) {
       throw HalfMoveOutOfRange();
     }
     distance--;
-    tmp=tmp->MainLine;
+    tmp = tmp->MainLine;
   }
-  return(tmp);
+  return (tmp);
 }
 
 } // namespace pgnp

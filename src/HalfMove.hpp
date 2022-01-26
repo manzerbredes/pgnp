@@ -21,6 +21,7 @@ public:
   std::string move;
   /// @brief Comment associated to the move
   std::string comment;
+  std::string NAG;
   /// @brief Next HalfMove link to this line
   HalfMove *MainLine;
   /// @brief Next HalfMove links to variation of this line

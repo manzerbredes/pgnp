@@ -4,8 +4,10 @@ PGNP is a Portable Game Notation (PGN) parser. More details about the
 PGN specification can be found [here](https://www.chessclub.com/help/PGN-spec).
 
 # Features
-- Basic PGN parsing (tags, move, comments, variations etc.)
+- Basic PGN parsing (tags, move, comments, variations, NAG, etc.)
 - Merged PGN files parsing (several games in one file)
+- Handle very large file (severals GB)
+- Very efficient
 
 # How to use it ?
 PGNP can be used as a shared library in your project.

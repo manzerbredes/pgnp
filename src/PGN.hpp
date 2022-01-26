@@ -1,4 +1,5 @@
 #include "HalfMove.hpp"
+#include "LargeFileStream.hpp"
 #include <algorithm>
 #include <exception>
 #include <fstream>
@@ -17,9 +18,10 @@ private:
   /// @brief Contains the parsed PGN moves
   HalfMove *moves;
   /// @brief Contains the PGN data
-  std::string pgn_content;
-  /// @brief Contains the location of the end of the last parsed game (1 PGN file may have multiple games)
-  int LastGameEndLoc;
+  LargeFileStream pgn_content;
+  /// @brief Contains the location of the end of the last parsed game (1 PGN
+  /// file may have multiple games)
+  long LastGameEndLoc;
 
 public:
   PGN();
@@ -27,8 +29,9 @@ public:
   void FromFile(std::string);
   void FromString(std::string);
   /**
-   * Parse the next available game. Note that it raises a @a NoGameFound exception if no more game is available.
-   * A call to this method flush all the last parsed game data. Be careful.
+   * Parse the next available game. Note that it raises a @a NoGameFound
+   * exception if no more game is available. A call to this method flush all the
+   * last parsed game data. Be careful.
    */
   void ParseNextGame();
   /// @brief Check if PGN contains a specific tag
@@ -49,13 +52,13 @@ public:
 private:
   /// @brief Populate @a tags with by parsing the one starting at location in
   /// argument
-  int ParseNextTag(int);
+  long ParseNextTag(long);
   /// @brief Get the next non-blank char location starting from location in
   /// argument
-  int NextNonBlank(int);
+  long NextNonBlank(long);
   /// @brief Parse a HalfMove at a specific location into @a pgn_content
-  int ParseHalfMove(int, HalfMove *);
-  int ParseComment(int,HalfMove *);
+  long ParseHalfMove(long, HalfMove *);
+  long ParseComment(long, HalfMove *);
 };
 
 struct UnexpectedEOF : public std::exception {
@@ -76,7 +79,7 @@ struct NoGameFound : public std::exception {
 
 struct UnexpectedCharacter : public std::exception {
   std::string msg;
-  UnexpectedCharacter(char actual, char required, int loc) {
+  UnexpectedCharacter(char actual, char required, long loc) {
     std::stringstream ss;
     ss << "Expected \'" << required << "\' at location " << loc
        << " but read \'" << actual << "\'";

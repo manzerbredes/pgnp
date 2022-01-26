@@ -7,7 +7,7 @@
 #define IS_DIGIT(c)                                                            \
   (c == '0' || c == '1' || c == '2' || c == '3' || c == '4' || c == '5' ||     \
    c == '6' || c == '7' || c == '8' || c == '9')
-#define IS_EOF(loc) ((loc) >= pgn_content.size())
+#define IS_EOF(loc) (pgn_content.IsEOF(loc))
 #define EOF_CHECK(loc)                                                         \
   {                                                                            \
     if (IS_EOF(loc))                                                           \
@@ -25,17 +25,10 @@ PGN::~PGN() {
 
 std::string PGN::GetResult() { return (result); }
 
-void PGN::FromFile(std::string filepath) {
-  std::ifstream inFile;
-  inFile.open(filepath);
-  std::stringstream strStream;
-  strStream << inFile.rdbuf();
-
-  this->pgn_content = strStream.str();
-}
+void PGN::FromFile(std::string filepath) { pgn_content.FromFile(filepath); }
 
 void PGN::FromString(std::string pgn_content) {
-  this->pgn_content = pgn_content;
+  this->pgn_content.FromString(pgn_content);
 }
 
 void PGN::ParseNextGame() {
@@ -46,20 +39,26 @@ void PGN::ParseNextGame() {
   result = "";
   tagkeys.clear();
   tags.clear();
-
   moves = new HalfMove();
+
+  // Search for new game
+  if (IS_EOF(LastGameEndLoc)) {
+    throw NoGameFound();
+  }
   int loc = NextNonBlank(LastGameEndLoc);
+
   if (IS_EOF(loc)) {
     throw NoGameFound();
   }
+
+  // Parse game
   while (!IS_EOF(loc)) {
     char c = pgn_content[loc];
     if (!IS_BLANK(c)) {
       if (c == '[') {
         loc = ParseNextTag(loc);
       } else if (IS_DIGIT(c)) {
-        loc = ParseHalfMove(loc, moves);
-        LastGameEndLoc = loc + 1; // Next game start 1 char after the last one
+        LastGameEndLoc = ParseHalfMove(loc, moves);
         break;
       } else if (c == '{') {
         loc = ParseComment(loc, moves);
@@ -68,6 +67,7 @@ void PGN::ParseNextGame() {
     }
     loc++;
   }
+
   if (result.size() <= 0) {
     throw InvalidGameResult();
   }
@@ -102,7 +102,7 @@ bool PGN::HasTag(std::string key) {
   return (std::find(tags.begin(), tags.end(), key) != tags.end());
 }
 
-int PGN::ParseComment(int loc, HalfMove *hm) {
+long PGN::ParseComment(long loc, HalfMove *hm) {
   // Goto next char
   loc = NextNonBlank(loc);
   EOF_CHECK(loc);
@@ -123,42 +123,39 @@ int PGN::ParseComment(int loc, HalfMove *hm) {
   return (loc);
 }
 
-int PGN::ParseHalfMove(int loc, HalfMove *hm) {
+long PGN::ParseHalfMove(long loc, HalfMove *hm) {
   // Goto next char
   loc = NextNonBlank(loc);
   EOF_CHECK(loc);
   char c = pgn_content[loc];
 
   // Check if we reach score entry (* or 1-0 or 0-1 or 1/2-1/2)
-  if (!IS_EOF(loc + 1)) {
-    char nc = pgn_content[loc + 1]; // Next c
-    if ((IS_DIGIT(c) && nc == '-') or (IS_DIGIT(c) && nc == '/') or c == '*') {
-      if (c == '*') {
-        result = "*";
-      } else if (nc == '-') {
-        if (c == '1') {
-          result = "1-0";
-          loc += 2;
-        } else {
-          result = "0-1";
-          loc += 2;
-        }
-      } else {
-        result = "1/2-1/2";
-        loc += 6;
-      }
-      return (loc);
-    }
+  if (c == '*') {
+    result = "*";
+    return (loc + 1);
   }
 
-  // Parse (move number
+  // Parse move number and check if end of game
   if (IS_DIGIT(c)) {
     std::string move_nb;
+    char first_digit = c;
     while (IS_DIGIT(c)) {
       move_nb += c;
       loc++;
       c = pgn_content[loc];
       EOF_CHECK(loc);
+      if (c == '/' || c == '-') {
+        if (c == '/') {
+          result = "1/2-1/2";
+          return (loc + 6);
+        } else if (first_digit == '1') {
+          result = "1-0";
+          return (loc + 2);
+        } else {
+          result = "0-1";
+          return (loc + 2);
+        }
+      }
     }
     hm->count = std::stoi(move_nb);
     loc++;
@@ -171,10 +168,6 @@ int PGN::ParseHalfMove(int loc, HalfMove *hm) {
   } else {
     hm->isBlack = true;
   }
-
-  // Parse comment entries (various comment could appear during HalfMove
-  // parsing)
-  loc = ParseComment(loc, hm);
 
   // Parse the HalfMove
   loc = NextNonBlank(loc);
@@ -189,13 +182,21 @@ int PGN::ParseHalfMove(int loc, HalfMove *hm) {
   }
   hm->move = move;
 
-  // Parse comment
-  loc = ParseComment(loc, hm);
-
-  // Skip end of variation
-  if (c == ')') {
+  // Check for NAG
+  loc = NextNonBlank(loc);
+  EOF_CHECK(loc);
+  c = pgn_content[loc];
+  if (c == '$') {
+    hm->NAG += c;
     loc++;
-    return (loc);
+    EOF_CHECK(loc);
+    c = pgn_content[loc];
+    while (IS_DIGIT(c)) {
+      hm->NAG += c;
+      loc++;
+      EOF_CHECK(loc);
+      c = pgn_content[loc];
+    }
   }
 
   // Parse comment
@@ -209,10 +210,19 @@ int PGN::ParseHalfMove(int loc, HalfMove *hm) {
     loc = ParseHalfMove(loc, var);
     hm->variations.push_back(var);
     loc++; // Skip ')'
+    // Goto next var
+    loc = NextNonBlank(loc);
+    EOF_CHECK(loc);
+    c = pgn_content[loc];
   }
 
-  // Parse comment
-  loc = ParseComment(loc, hm);
+  // Skip end of variation
+  loc = NextNonBlank(loc);
+  EOF_CHECK(loc);
+  c = pgn_content[loc];
+  if (c == ')') {
+    return (loc);
+  }
 
   // Parse next HalfMove
   loc = NextNonBlank(loc);
@@ -231,10 +241,10 @@ int PGN::ParseHalfMove(int loc, HalfMove *hm) {
   return (loc);
 }
 
-int PGN::ParseNextTag(int start_loc) {
+long PGN::ParseNextTag(long start_loc) {
   // Parse key
   std::string key;
-  int keyloc = start_loc + 1;
+  long keyloc = start_loc + 1;
   EOF_CHECK(keyloc);
   char c = pgn_content[keyloc];
   while (!IS_BLANK(c)) {
@@ -246,7 +256,7 @@ int PGN::ParseNextTag(int start_loc) {
 
   // Parse value
   std::string value;
-  int valueloc = NextNonBlank(keyloc) + 1;
+  long valueloc = NextNonBlank(keyloc) + 1;
   EOF_CHECK(keyloc);
   c = pgn_content[valueloc];
   while (c != '"' or IS_EOF(valueloc)) {
@@ -294,14 +304,16 @@ std::string PGN::Dump() {
   return (ss.str());
 }
 
-int PGN::NextNonBlank(int loc) {
+long PGN::NextNonBlank(long loc) {
   char c = pgn_content[loc];
   while (IS_BLANK(c)) {
     loc++;
-    if (IS_EOF(loc))
+    if (IS_EOF(loc)) {
       return (loc);
+    }
     c = pgn_content[loc];
   }
+
   return (loc);
 }
 
