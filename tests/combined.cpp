@@ -41,3 +41,34 @@ TEST_CASE("Hartwig PGN", "[combined/hartwig]") {
           "winning in crushing style.  Thankfully it worked!");
   }
 }
+
+TEST_CASE("Kramnik PGN", "[combined/kramnik]") {
+  // PGN source: https://www.angelfire.com/games3/smartbridge/
+
+  pgnp::PGN pgn;
+  pgn.FromFile("pgn_files/combined/kramnik.pgn");
+
+  // Count games
+  REQUIRE_NOTHROW([&]() {
+    char i = 0;
+    try {
+      while (true) {
+        pgn.ParseNextGame();
+        i++;
+      }
+    } catch (const NoGameFound &e) {
+      CHECK(i == 40);
+    }
+  }());
+
+  SECTION("Check comments of a game") {
+    pgnp::PGN pgn;
+    pgn.FromFile("pgn_files/combined/kramnik.pgn");
+    pgn.ParseNextGame(); // Load game 1
+
+    HalfMove *m = new HalfMove();
+    pgn.GetMoves(m);
+    CHECK(m->comment ==
+          "E32: Nimzo-Indian: Classical (4 Qc2): 4...0-0");
+  }
+}

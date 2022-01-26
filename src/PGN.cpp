@@ -45,7 +45,7 @@ void PGN::ParseNextGame() {
   if (IS_EOF) {
     throw NoGameFound();
   }
-  int loc = NextNonBlank(LastGameEndLoc);
+  long loc = NextNonBlank(LastGameEndLoc);
   if (IS_EOF) {
     throw NoGameFound();
   }

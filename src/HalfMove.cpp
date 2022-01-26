@@ -5,6 +5,7 @@ namespace pgnp {
 HalfMove::HalfMove() : count(-1), isBlack(false), MainLine(NULL) {}
 
 HalfMove::~HalfMove() {
+  delete MainLine;
   for (auto *move : variations) {
     delete move;
   }
