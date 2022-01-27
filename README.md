@@ -10,7 +10,41 @@ PGN specification can be found [here](https://www.chessclub.com/help/PGN-spec).
 - Basic PGN parsing (tags, move, comments, variations, NAG, etc.)
 - Parse PGN files that contains multiple games
 - Handle very large files: up to 2^(sizeof(unsigned long long)*8) bytes
-- Efficiency
+- Efficiency:
+
+<b></b>
+
+    # cpu: Intel(R) Core(TM) i7-10750H CPU @ 2.60GHz
+    # file name: lichess_db_standard_rated_2017-06.pgn
+    # file sha1sum: af8e01ab9709950be1804880d22d094324df5338
+    # file source: https://database.lichess.org/#standard_games
+    # file number of games: 11512600
+    # file size: 24.6GB
+    # pgnp FILE_BUFFER_SIZE: (1024 * 1024 / 2)
+
+	> User time (seconds): 599.81
+	> System time (seconds): 2.72
+	> Percent of CPU this job got: 99%
+	> Elapsed (wall clock) time (h:mm:ss or m:ss): 10:03.17
+	> Average shared text size (kbytes): 0
+	> Average unshared data size (kbytes): 0
+	> Average stack size (kbytes): 0
+	> Average total size (kbytes): 0
+	> Maximum resident set size (kbytes): 4484
+	> Average resident set size (kbytes): 0
+	> Major (requiring I/O) page faults: 0
+	> Minor (reclaiming a frame) page faults: 784
+	> Voluntary context switches: 4
+	> Involuntary context switches: 6649
+	> Swaps: 0
+	> File system inputs: 0
+	> File system outputs: 0
+	> Socket messages sent: 0
+	> Socket messages received: 0
+	> Signals delivered: 0
+	> Page size (bytes): 4096
+	> Exit status: 0
+
 
 # How to use it ?
 PGNP can be used as a shared library in your project.

@@ -59,6 +59,10 @@ void PGN::ParseNextGame() {
       } else if (IS_DIGIT(c)) {
         LastGameEndLoc = ParseHalfMove(loc, moves);
         break;
+      } else if (c == '*') {
+        result = "*";
+        LastGameEndLoc=loc+1;
+        break;
       } else if (c == '{') {
         loc = ParseComment(loc, moves);
         continue; // No need loc++
@@ -330,11 +334,10 @@ loctype PGN::GotoNextToken(loctype loc) {
     c = pgn_content[loc];
     if (c == '%' || c == ';') {
       loc = GotoEOL(loc);
-      if(!IS_EOF){
-        c=pgn_content[loc];
-      }
-      else{
-        return(loc);
+      if (!IS_EOF) {
+        c = pgn_content[loc];
+      } else {
+        return (loc);
       }
     }
   }
