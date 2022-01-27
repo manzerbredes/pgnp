@@ -190,11 +190,11 @@ loctype PGN::ParseHalfMove(loctype loc, HalfMove *hm) {
   }
   hm->move = move;
 
+  // Parse Comments, Variations and NAG
   loc = GotoNextToken(loc);
   EOF_CHECK(loc);
   c = pgn_content[loc];
-
-  while (c == '{' || c == '$' || c == '(' || c == ';' || c == '%') {
+  while (c == '{' || c == '$' || c == '(') {
     if (c == '{') {
       // Parse comment
       loc = ParseComment(loc, hm);
@@ -236,9 +236,6 @@ loctype PGN::ParseHalfMove(loctype loc, HalfMove *hm) {
   }
 
   // Skip end of variation
-  loc = GotoNextToken(loc);
-  EOF_CHECK(loc);
-  c = pgn_content[loc];
   if (c == ')') {
     return (loc);
   }
@@ -332,7 +329,7 @@ loctype PGN::GotoNextToken(loctype loc) {
     }
     c = pgn_content[loc];
     if (c == '%' || c == ';') {
-      loc = GotoEOL(loc);
+      loc = GotoEOL(loc)+1;
       if (IS_EOF) {
         return (loc);
       }
