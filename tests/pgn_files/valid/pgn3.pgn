@@ -1,0 +1,40 @@
+[Event "Hastings"] 
+[Site "?"] 
+[Date "1999.01.??"] 
+[Round "8"] 
+[White "Plaskett, James"]
+[Black "Shipov, Sergei"]
+[Result "1-0"]
+[ECO "B23"]
+[Annotator "Hartwig,Th"]
+[PlyCount "53"]
+
+{This week I have to apologise for not providing the sort of in-depth annotations you may be used to on this site.  My excuse is that I'm very busy playing chess at the U.S. Open! However, hopefully I have made up for it by choosing an excellent game, so it will still be worth your time to take a look. } 
+1. e4 c5 ; blkejglkjg
+2. Nc3 $1 
+{Certainly an annoying move order against Najdorf junkies.} 
+2... d6 3. f4 Nc6 4. Nf3 g6 5. Bb5 $5 
+(5. Bc4 $14) 
+5... Bd7 6. O-O Bg7 7. d3 a6 8. Bxc6 Bxc6 9. Kh1 Qd7 10. Qe2 f5 $2 
+    {10... Nh6 was probably better.  Far from stopping white's kingside play, this weakens e6, forming the basis for some nice knight maneuvers in the next few moves.} 
+11. Nd5 Rd8 12. Ng5 $1 
+{The knights are homing in on the weak e6 and b6 squares.} 
+12... Nf6 
+(12... h6 $4 13. Ne6 Rb8 14. exf5 $1 Bxd5 15. Qg4 Bxe6 16. fxe6 Qa4 17. Qxg6+ $18)
+13. Nb6 ;fklzaflkj
+$1 
+ (13. Ne6 Bxd5 14. exd5 Nxd5 15. Nxg7+ Kf7 $13) 
+13... Qc7 14. Nc4 fxe4 15. Ne6 Qc8 16. f5 $1 Rg8 
+(16... gxf5 $2 17. Nxg7+ Kf7 18. Nxf5 $18) 
+17. Nb6 $1 exd3 18. cxd3 Qb8 19. fxg6 Bh8 
+(19... hxg6 20. Nxg7+ Rxg7 21. Rxf6 $18) 
+20. g7 $1 Bxg7 21. Bg5 Bh8 
+(21... Qa7 22. Qh5+ $18) 
+22. Rae1 Rd7 23. Rxf6 $1 
+(23. Bxf6 $4 {Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. } Rxg2 $13) 
+23... exf6 
+(23... Bxf6 24. Qh5+ Rg6 25. Qxh7 $18) 
+24. Nxc5+ Kd8 25. Ncxd7 Bxd7 26. Qe7+ Kc7 27. Nd5+ 
+{A very nice game.  Black was made to look like a complete beginner.} 
+(27. Nd5+ Kc8 (27... Kc6 28. Rc1+ $18) 28. Rc1+ Bc6 29. Nb6#)
+1-0
