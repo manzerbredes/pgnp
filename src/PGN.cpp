@@ -190,35 +190,46 @@ loctype PGN::ParseHalfMove(loctype loc, HalfMove *hm) {
   }
   hm->move = move;
 
-  // Check for NAG
   loc = GotoNextToken(loc);
   EOF_CHECK(loc);
   c = pgn_content[loc];
-  if (c == '$') {
-    hm->NAG += c;
-    loc++;
-    EOF_CHECK(loc);
-    c = pgn_content[loc];
-    while (IS_DIGIT(c)) {
-      hm->NAG += c;
-      loc++;
+
+  while (c == '{' || c == '$' || c == '(' || c == ';' || c == '%') {
+    if (c == '{') {
+      // Parse comment
+      loc = ParseComment(loc, hm);
+    } else if (c == '$') {
+      // Check for NAG
+      loc = GotoNextToken(loc);
       EOF_CHECK(loc);
       c = pgn_content[loc];
+      if (c == '$') {
+        hm->NAG += c;
+        loc++;
+        EOF_CHECK(loc);
+        c = pgn_content[loc];
+        while (IS_DIGIT(c)) {
+          hm->NAG += c;
+          loc++;
+          EOF_CHECK(loc);
+          c = pgn_content[loc];
+        }
+      }
+    } else if (c == '(') {
+      // Check for variations
+      loc = GotoNextToken(loc);
+      while (!IS_EOF && pgn_content[loc] == '(') {
+        loc++; // Skip '('
+        HalfMove *var = new HalfMove;
+        loc = ParseHalfMove(loc, var);
+        hm->variations.push_back(var);
+        loc++; // Skip ')'
+        // Goto next var
+        loc = GotoNextToken(loc);
+        EOF_CHECK(loc);
+        c = pgn_content[loc];
+      }
     }
-  }
-
-  // Parse comment
-  loc = ParseComment(loc, hm);
-
-  // Check for variations
-  loc = GotoNextToken(loc);
-  while (!IS_EOF && pgn_content[loc] == '(') {
-    loc++; // Skip '('
-    HalfMove *var = new HalfMove;
-    loc = ParseHalfMove(loc, var);
-    hm->variations.push_back(var);
-    loc++; // Skip ')'
-    // Goto next var
     loc = GotoNextToken(loc);
     EOF_CHECK(loc);
     c = pgn_content[loc];
