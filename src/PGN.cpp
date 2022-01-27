@@ -329,9 +329,12 @@ loctype PGN::GotoNextToken(loctype loc) {
     }
     c = pgn_content[loc];
     if (c == '%' || c == ';') {
-      loc = GotoEOL(loc)+1;
-      if (IS_EOF) {
-        return (loc);
+      loc = GotoEOL(loc);
+      if(!IS_EOF){
+        c=pgn_content[loc];
+      }
+      else{
+        return(loc);
       }
     }
   }
