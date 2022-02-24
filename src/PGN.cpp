@@ -4,10 +4,24 @@
 #include <string>
 
 #define IS_BLANK(c) (c == ' ' || c == '\n' || c == '\t' || c == '\r')
+#define IS_ALPHA(c)                                                            \
+  ((c == 'a' || c == 'b' || c == 'c' || c == 'd' || c == 'e' || c == 'f' ||    \
+    c == 'g' || c == 'h' || c == 'i' || c == 'j' || c == 'k' || c == 'l' ||    \
+    c == 'm' || c == 'n' || c == 'o' || c == 'p' || c == 'q' || c == 'r' ||    \
+    c == 's' || c == 't' || c == 'u' || c == 'v' || c == 'w' || c == 'x' ||    \
+    c == 'y' || c == 'z') ||                                                   \
+   (c == 'A' || c == 'B' || c == 'C' || c == 'D' || c == 'E' || c == 'F' ||    \
+    c == 'G' || c == 'H' || c == 'I' || c == 'J' || c == 'K' || c == 'L' ||    \
+    c == 'M' || c == 'N' || c == 'O' || c == 'P' || c == 'Q' || c == 'R' ||    \
+    c == 'S' || c == 'T' || c == 'U' || c == 'V' || c == 'W' || c == 'X' ||    \
+    c == 'Y' || c == 'Z'))
 #define IS_DIGIT(c)                                                            \
   (c == '0' || c == '1' || c == '2' || c == '3' || c == '4' || c == '5' ||     \
    c == '6' || c == '7' || c == '8' || c == '9')
 #define IS_EOF (pgn_content.IsEOF())
+#define IS_TOKEN(c)                                                            \
+  (IS_DIGIT(c) || IS_ALPHA(c) || c == '{' || c == '}' || c == '(' ||           \
+   c == ')' || c == '[' || c == ']' || c == '$' || c == '"' || c=='*')
 #define EOF_CHECK(loc)                                                         \
   {                                                                            \
     if (IS_EOF)                                                                \
@@ -61,7 +75,7 @@ void PGN::ParseNextGame() {
         break;
       } else if (c == '*') {
         result = "*";
-        LastGameEndLoc=loc+1;
+        LastGameEndLoc = loc + 1;
         break;
       } else if (c == '{') {
         loc = ParseComment(loc, moves);
@@ -326,7 +340,7 @@ std::string PGN::Dump() {
 
 loctype PGN::GotoNextToken(loctype loc) {
   char c = pgn_content[loc];
-  while (IS_BLANK(c)) {
+  while (IS_BLANK(c) || !IS_TOKEN(c)) {
     loc++;
     if (IS_EOF) {
       return (loc);
@@ -341,7 +355,6 @@ loctype PGN::GotoNextToken(loctype loc) {
       }
     }
   }
-
   return (loc);
 }
 
