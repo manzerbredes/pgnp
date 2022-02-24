@@ -21,7 +21,7 @@
 #define IS_EOF (pgn_content.IsEOF())
 #define IS_TOKEN(c)                                                            \
   (IS_DIGIT(c) || IS_ALPHA(c) || c == '{' || c == '}' || c == '(' ||           \
-   c == ')' || c == '[' || c == ']' || c == '$' || c == '"' || c=='*')
+   c == ')' || c == '[' || c == ']' || c == '$' || c == '"' || c == '*')
 #define EOF_CHECK(loc)                                                         \
   {                                                                            \
     if (IS_EOF)                                                                \
@@ -70,18 +70,9 @@ void PGN::ParseNextGame() {
     if (!IS_BLANK(c)) {
       if (c == '[') {
         loc = ParseNextTag(loc);
-      } else if (IS_DIGIT(c)) {
+      } else {
         LastGameEndLoc = ParseHalfMove(loc, moves);
         break;
-      } else if (c == '*') {
-        result = "*";
-        LastGameEndLoc = loc + 1;
-        break;
-      } else if (c == '{') {
-        loc = ParseComment(loc, moves);
-        continue; // No need loc++
-      } else if (c == '%' || c == ';') {
-        loc = GotoEOL(loc);
       }
     }
     loc++;
@@ -159,6 +150,13 @@ loctype PGN::ParseHalfMove(loctype loc, HalfMove *hm) {
   if (c == '*') {
     result = "*";
     return (loc + 1);
+  }
+
+  // Parse comment
+  if (c == '{') {
+    loc = ParseComment(loc, hm);
+    EOF_CHECK(loc);
+    c = pgn_content[loc];
   }
 
   // Parse move number and check if end of game
