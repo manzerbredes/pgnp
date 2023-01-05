@@ -7,7 +7,7 @@ TEST_CASE("Valid PGN", "[valid/pgn1]") {
   PGN pgn;
   REQUIRE_NOTHROW(pgn.FromFile("pgn_files/valid/pgn1.pgn"));
   REQUIRE_NOTHROW(pgn.ParseNextGame());
-  REQUIRE_THROWS(pgn.STRCheck());
+  REQUIRE_THROWS_AS(pgn.STRCheck(),pgnp::STRCheckFailed);
 
   HalfMove *m = new HalfMove();
   pgn.GetMoves(m);
@@ -177,4 +177,10 @@ TEST_CASE("Valid PGN", "[valid/pgn3]") {
             "$18");
     REQUIRE(m->GetHalfMoveAt(52)->variations[0]->MainLine->variations[0]->MainLine->NAG == "$18");
   }
+}
+
+TEST_CASE("Goto Next Game Tests", "[valid/pgn3/GotoNextGame]") {
+  PGN pgn;
+  REQUIRE_NOTHROW(pgn.FromFile("pgn_files/valid/pgn3.pgn"));
+  REQUIRE_THROWS_AS(pgn.GotoNextGame(),pgnp::NoGameFound);
 }

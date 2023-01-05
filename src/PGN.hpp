@@ -37,6 +37,8 @@ public:
    * last parsed game data. Be careful.
    */
   void ParseNextGame();
+  /// @brief Goto the next game while avoiding to parse entire game moves
+  void GotoNextGame();
   /// @brief Check if PGN contains a specific tag
   bool HasTag(std::string);
   /// @brief Perform a Seven Tag Roster compliance check

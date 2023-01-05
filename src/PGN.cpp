@@ -45,6 +45,46 @@ void PGN::FromString(std::string pgn_content) {
   this->pgn_content.FromString(pgn_content);
 }
 
+void PGN::GotoNextGame(){
+  // Search for new game
+  if (IS_EOF) {
+    throw NoGameFound();
+  }
+  loctype loc = GotoNextToken(LastGameEndLoc);
+  if (IS_EOF) {
+    throw NoGameFound();
+  }
+  // First skip current game tags
+  while (!IS_EOF) {
+    char c = pgn_content[loc];
+    if (!IS_BLANK(c)) {
+      if (c == '[') {
+        loc = ParseNextTag(loc); // Here we are at ']' after the call to ParseNextTag
+      } else
+        break;
+    }
+    loc++;
+  }
+  // Goto next game '[' by skipping the entire game
+  while (!IS_EOF) {
+    char c = pgn_content[loc];
+    if (!IS_BLANK(c)) {
+      if (c == '[') {
+        LastGameEndLoc=loc;
+        return;
+      } else if(c== '{'){
+        // We skip the comments as they can contains '['
+        while(!IS_EOF && c != '}'){
+          loc++;
+          c = pgn_content[loc];
+        }
+      }
+    }
+    loc++;
+  }
+  throw NoGameFound();
+}
+
 void PGN::ParseNextGame() {
   // Clean previous parse
   if (moves != NULL) {

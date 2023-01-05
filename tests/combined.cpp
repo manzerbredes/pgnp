@@ -90,3 +90,31 @@ TEST_CASE("Kramnik PGN", "[combined/kramnik]") {
     CHECK(m->comment == "E32: Nimzo-Indian: Classical (4 Qc2): 4...0-0");
   }
 }
+
+TEST_CASE("Goto Next Game Tests", "[combined/hartwig/GotoNextGame]") {
+  // PGN source: https://www.angelfire.com/games3/smartbridge/
+
+  pgnp::PGN pgn;
+  pgn.FromFile("pgn_files/combined/hartwig.pgn");
+  // First goto game 3
+  pgn.GotoNextGame();
+  pgn.GotoNextGame();
+  // Parse game 3
+  pgn.ParseNextGame();
+  CHECK(pgn.GetTagValue("Event") == "Clichy");
+  // Goto game 5
+  pgn.GotoNextGame();
+  // Parse game 5
+  pgn.ParseNextGame();
+  CHECK(pgn.GetTagValue("Event") == "World Open U2200");
+  CHECK(pgn.GetTagValue("Site") == "Philadelphia");
+  CHECK(pgn.GetTagValue("Black") == "Thomas, Rodney");
+  // Goto game 8
+  pgn.GotoNextGame(); // Goto game 7
+  pgn.GotoNextGame(); // Goto game 8
+  // Parse game 8
+  pgn.ParseNextGame();
+  CHECK(pgn.GetTagValue("Event") == "Hastings");
+  CHECK(pgn.GetTagValue("White") == "Plaskett, James");
+  CHECK(pgn.GetTagValue("Black") == "Shipov, Sergei");
+}
