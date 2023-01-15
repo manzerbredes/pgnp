@@ -11,7 +11,7 @@ HalfMove::~HalfMove() {
   }
 }
 
-std::string HalfMove::NestedDump(HalfMove *m, int indent) {
+std::string HalfMove::NestedDump(const HalfMove *m, int indent) const{
   std::stringstream ss;
 
   for (int i = 0; i < indent; i++) {
@@ -33,11 +33,11 @@ std::string HalfMove::NestedDump(HalfMove *m, int indent) {
   return (ss.str());
 }
 
-std::string HalfMove::Dump() { return (NestedDump(this, 0)); }
+std::string HalfMove::Dump() const { return (NestedDump(this, 0)); }
 
-int HalfMove::GetLength() {
+int HalfMove::GetLength() const {
   int length = 0;
-  HalfMove *m = this;
+  const HalfMove *m = this;
   while (m != NULL) {
     length++;
     m = m->MainLine;

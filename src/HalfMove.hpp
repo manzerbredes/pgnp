@@ -13,7 +13,7 @@ namespace pgnp {
 class HalfMove {
 private:
   /// @brief Recursive dump
-  std::string NestedDump(HalfMove *, int);
+  std::string NestedDump(const HalfMove *, int) const;
 
 public:
   /// @brief Contains current move count
@@ -33,9 +33,9 @@ public:
   HalfMove();
   ~HalfMove();
   /// @brief Get number of HalfMove in the MailLine
-  int GetLength();
+  int GetLength() const;
   /// @brief Dump move and all its variations
-  std::string Dump();
+  std::string Dump() const;
   /// @brief Perform a deep copy of a HalfMove
   void Copy(HalfMove *copy);
   /// @brief Get HalfMove located x down the MainLine
