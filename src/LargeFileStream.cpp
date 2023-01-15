@@ -37,8 +37,9 @@ char LargeFileStream::operator[](loctype loc) {
   if (use_string) {
     if (loc >= content.size()) {
       eof = true;
+      return ('?');
     }
-    return ('?');
+    return (content[loc]);
   }
 
   // Goto the right memory chuck

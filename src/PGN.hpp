@@ -102,4 +102,12 @@ struct STRCheckFailed : public std::exception {
   }
 };
 
+/**
+ * @brief Parse a simple sequence of SAN moves
+ *
+ * @param sequence e.g: 1.e4 e5 2.Nf3
+ * @param moves Returned moves sequence
+ */
+void ParseSANMoves(const std::string &sequence,HalfMove *moves);
+
 } // namespace pgnp

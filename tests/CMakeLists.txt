@@ -18,3 +18,7 @@ add_test(PGNP_STR_Compliant_Set pgnp_str)
 add_executable(pgnp_combined combined.cpp)
 target_link_libraries(pgnp_combined pgnp pgnp_catch3)
 add_test(PGNP_Combined_Set pgnp_combined)
+
+add_executable(from_string from_string.cpp)
+target_link_libraries(from_string pgnp pgnp_catch3)
+add_test(PGNP_FromString_Set from_string)

@@ -410,4 +410,13 @@ loctype PGN::GotoEOL(loctype loc) {
   }
 }
 
+void ParseSANMoves(const std::string &sequence,HalfMove *moves) {
+  PGN parser;
+  // Note that PGN need a results (* at the end)
+  // Otherwise an InvalidGameResult exception is raised
+  parser.FromString(sequence+" *");
+  parser.ParseNextGame();
+  parser.GetMoves(moves);
+}
+
 } // namespace pgnp
