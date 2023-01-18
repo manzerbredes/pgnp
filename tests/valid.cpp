@@ -148,34 +148,34 @@ TEST_CASE("Valid PGN", "[valid/pgn3]") {
   }
 
   SECTION("NAGs") {
-    REQUIRE(m->GetHalfMoveAt(2)->NAG == "$1");
-    REQUIRE(m->GetHalfMoveAt(8)->NAG == "$5");
-    REQUIRE(m->GetHalfMoveAt(8)->variations[0]->NAG == "$14");
-    REQUIRE(m->GetHalfMoveAt(19)->NAG == "$2");
-    REQUIRE(m->GetHalfMoveAt(22)->NAG == "$1");
-    REQUIRE(m->GetHalfMoveAt(23)->variations[0]->NAG == "$4");
-    REQUIRE(m->GetHalfMoveAt(23)->variations[0]->GetHalfMoveAt(3)->NAG == "$1");
+    REQUIRE(m->GetHalfMoveAt(2)->NAG == 1);
+    REQUIRE(m->GetHalfMoveAt(8)->NAG == 5);
+    REQUIRE(m->GetHalfMoveAt(8)->variations[0]->NAG == 14);
+    REQUIRE(m->GetHalfMoveAt(19)->NAG == 2);
+    REQUIRE(m->GetHalfMoveAt(22)->NAG == 1);
+    REQUIRE(m->GetHalfMoveAt(23)->variations[0]->NAG == 4);
+    REQUIRE(m->GetHalfMoveAt(23)->variations[0]->GetHalfMoveAt(3)->NAG == 1);
     REQUIRE(m->GetHalfMoveAt(23)->variations[0]->GetHalfMoveAt(9)->NAG ==
-            "$18");
-    REQUIRE(m->GetHalfMoveAt(24)->NAG == "$1");
+            18);
+    REQUIRE(m->GetHalfMoveAt(24)->NAG == 1);
     REQUIRE(m->GetHalfMoveAt(24)->variations[0]->GetHalfMoveAt(5)->NAG ==
-            "$13");
-    REQUIRE(m->GetHalfMoveAt(30)->NAG == "$1");
-    REQUIRE(m->GetHalfMoveAt(31)->variations[0]->NAG == "$2");
+            13);
+    REQUIRE(m->GetHalfMoveAt(30)->NAG == 1);
+    REQUIRE(m->GetHalfMoveAt(31)->variations[0]->NAG == 2);
     REQUIRE(m->GetHalfMoveAt(31)->variations[0]->GetHalfMoveAt(3)->NAG ==
-            "$18");
-    REQUIRE(m->GetHalfMoveAt(32)->NAG == "$1");
+            18);
+    REQUIRE(m->GetHalfMoveAt(32)->NAG == 1);
     REQUIRE(m->GetHalfMoveAt(37)->variations[0]->GetHalfMoveAt(3)->NAG ==
-            "$18");
-    REQUIRE(m->GetHalfMoveAt(38)->NAG == "$1");
+            18);
+    REQUIRE(m->GetHalfMoveAt(38)->NAG == 1);
     REQUIRE(m->GetHalfMoveAt(41)->variations[0]->GetHalfMoveAt(1)->NAG ==
-            "$18");
-    REQUIRE(m->GetHalfMoveAt(44)->NAG == "$1");
-    REQUIRE(m->GetHalfMoveAt(44)->variations[0]->NAG == "$4");
-    REQUIRE(m->GetHalfMoveAt(44)->variations[0]->MainLine->NAG == "$13");
+            18);
+    REQUIRE(m->GetHalfMoveAt(44)->NAG == 1);
+    REQUIRE(m->GetHalfMoveAt(44)->variations[0]->NAG == 4);
+    REQUIRE(m->GetHalfMoveAt(44)->variations[0]->MainLine->NAG == 13);
     REQUIRE(m->GetHalfMoveAt(45)->variations[0]->GetHalfMoveAt(3)->NAG ==
-            "$18");
-    REQUIRE(m->GetHalfMoveAt(52)->variations[0]->MainLine->variations[0]->MainLine->NAG == "$18");
+            18);
+    REQUIRE(m->GetHalfMoveAt(52)->variations[0]->MainLine->variations[0]->MainLine->NAG == 18);
   }
 }
 

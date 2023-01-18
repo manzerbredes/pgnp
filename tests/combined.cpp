@@ -50,7 +50,7 @@ TEST_CASE("Hartwig PGN", "[combined/hartwig]") {
           "just loses thanks to the interpolation of 11. c3 fxe4:");
     
     HalfMove *m20w = (m->GetHalfMoveAt(38)); // move 20 white => m20w
-    CHECK(m20w->NAG == "$1");
+    CHECK(m20w->NAG == 1);
 
     HalfMove *m21b = (m->GetHalfMoveAt(42)); // move 21 black => m21b
     CHECK(m21b->comment ==

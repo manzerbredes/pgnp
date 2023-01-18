@@ -2,7 +2,7 @@
 
 namespace pgnp {
 
-HalfMove::HalfMove() : count(-1), isBlack(false), MainLine(NULL) {}
+HalfMove::HalfMove() : count(-1), isBlack(false), MainLine(NULL), NAG(0) {}
 
 HalfMove::~HalfMove() {
   delete MainLine;

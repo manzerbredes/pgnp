@@ -260,16 +260,19 @@ loctype PGN::ParseHalfMove(loctype loc, HalfMove *hm) {
       EOF_CHECK(loc);
       c = pgn_content[loc];
       if (c == '$') {
-        hm->NAG += c;
+        //hm->NAG += c;
+        std::string NAG;
         loc++;
         EOF_CHECK(loc);
         c = pgn_content[loc];
         while (IS_DIGIT(c)) {
-          hm->NAG += c;
+          NAG += c;
           loc++;
           EOF_CHECK(loc);
           c = pgn_content[loc];
         }
+        if(NAG.size()>0)
+          hm->NAG=std::stoi(NAG);
       }
     } else if (c == '(') {
       // Check for variations
