@@ -1,6 +1,7 @@
 archlinux:
   image: "archlinux:base-devel"
   before_script:
-    - pacman -Sy cmake --noconfirm --needed
+    - pacman -Sy cmake git --noconfirm --needed
   script:
-    - mkdir build && cd build && cmake -DCOMPILE_TESTS:BOOL:ON ../ && make && ctest
+    - git submodule init && git submodule update
+    - mkdir build && cd build && cmake -DCOMPILE_TESTS:BOOL=ON ../ && make && ctest
