@@ -3,4 +3,4 @@ archlinux:
   before_script:
     - pacman -Sy cmake --noconfirm --needed
   script:
-    - mkdir build && cd build && cmake ../ && make && ctest
+    - mkdir build && cd build && cmake ../ -DCOMPILE_TESTS:BOOL:ON && make && ctest

@@ -78,4 +78,20 @@ HalfMove *HalfMove::GetHalfMoveAt(int distance) {
   return (tmp);
 }
 
+CMI::HalfMove *HalfMove::GetAsCMI(){
+  CMI::HalfMove *m=new CMI::HalfMove();
+  m->SetSAN(move);
+  m->SetNumber(count);
+  m->SetIsBlack(isBlack);
+  m->SetComment(comment);
+  m->SetNAG(NAG);
+  if(MainLine!=NULL){
+    m->SetMainline(MainLine->GetAsCMI());
+  }
+  for (HalfMove *var : variations) {
+    m->AddVariation(var->GetAsCMI());
+  }
+  return m;
+}
+
 } // namespace pgnp

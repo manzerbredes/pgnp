@@ -12,9 +12,16 @@ configure_file(src/PGN.hpp ${PGNP_INCLUDE_DIR}/pgnp.hpp COPYONLY)
 configure_file(src/HalfMove.hpp ${PGNP_INCLUDE_DIR} COPYONLY)
 configure_file(src/LargeFileStream.hpp ${PGNP_INCLUDE_DIR} COPYONLY)
 configure_file(src/Types.hpp ${PGNP_INCLUDE_DIR} COPYONLY)
-
 include_directories(${PGNP_INCLUDE_DIR})
 
+# ChessMoveInterface
+add_subdirectory(libs/chess-move-interface)
+include_directories(${CMI_INCLUDE_DIR})
+
 # Unit tests
-enable_testing()
-add_subdirectory(./tests)
+set(COMPILE_TESTS OFF CACHE BOOL "Should unit tests be compiled")
+if(COMPILE_TESTS)
+    enable_testing()
+    add_subdirectory(./tests)
+endif()
+

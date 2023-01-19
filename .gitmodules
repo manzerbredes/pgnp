@@ -1,0 +1,3 @@
+[submodule "libs/chess-move-interface"]
+	path = libs/chess-move-interface
+	url = git@gitlab.com:manzerbredes/chess-move-interface.git

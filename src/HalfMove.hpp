@@ -5,6 +5,8 @@
 #include <string>
 #include <vector>
 
+#include "CMI.hpp"
+
 namespace pgnp {
 
 /**
@@ -40,6 +42,8 @@ public:
   void Copy(HalfMove *copy);
   /// @brief Get HalfMove located x down the MainLine
   HalfMove *GetHalfMoveAt(int);
+  /// @brief Get CMI version of HalfMove
+  CMI::HalfMove *GetAsCMI();
 };
 
 struct HalfMoveOutOfRange : public std::exception {
