@@ -17,6 +17,11 @@ include_directories(${PGNP_INCLUDE_DIR})
 # ChessMoveInterface
 add_subdirectory(libs/chess-move-interface)
 include_directories(${CMI_INCLUDE_DIR})
+target_link_libraries(pgnp PRIVATE ChessMoveInterface)
+
+# Add include directiries to target to be independent of ${PGNP_INCLUDE_DIR} and ${CMI_INCLUDE_DIR}
+target_include_directories(pgnp PUBLIC ${CMI_INCLUDE_DIR})
+target_include_directories(pgnp PUBLIC ${PGNP_INCLUDE_DIR})
 
 # Unit tests
 set(COMPILE_TESTS OFF CACHE BOOL "Should unit tests be compiled")
