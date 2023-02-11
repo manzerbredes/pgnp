@@ -89,7 +89,6 @@ Access to moves:
 # CMake Integration
 By using the `add_subdirectory()` directive on this repository, you will be able to use the following cmake calls in your project:
 
-    include_directories(${PGNP_INCLUDE_DIR})
     target_link_libraries(<YOUR_TARGET> pgnp)
 
 
