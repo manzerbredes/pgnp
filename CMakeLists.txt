@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.10)
 project(pgnp)
 
 # Shared library
-add_library(pgnp SHARED src/PGN.cpp src/HalfMove.cpp src/LargeFileStream.cpp)
+add_library(pgnp STATIC src/PGN.cpp src/HalfMove.cpp src/LargeFileStream.cpp)
 
 # Includes
 set(PGNP_INCLUDE_DIR ${CMAKE_CURRENT_BINARY_DIR}/includes) # For conveniance
@@ -16,7 +16,6 @@ include_directories(${PGNP_INCLUDE_DIR})
 
 # ChessMoveInterface
 add_subdirectory(libs/chess-move-interface)
-include_directories(${CMI_INCLUDE_DIR})
 target_link_libraries(pgnp PUBLIC ChessMoveInterface)
 
 # Add include directiries to target to be independent of ${PGNP_INCLUDE_DIR} and ${CMI_INCLUDE_DIR}
