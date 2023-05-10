@@ -30,7 +30,7 @@
 
 namespace pgnp {
 
-PGN::PGN() : LastGameEndLoc(0), moves(NULL) {}
+PGN::PGN() : moves(NULL), LastGameEndLoc(0) {}
 
 PGN::~PGN() {
   if (moves != NULL)
@@ -124,7 +124,7 @@ void PGN::ParseNextGame() {
 }
 
 void PGN::STRCheck() {
-  int i = 0;
+  long unsigned int i = 0;
   // Locate Event tag
   while (i < tagkeys.size()) {
     if (tagkeys[i] == "Event") {
