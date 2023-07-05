@@ -1,12 +1,21 @@
 [![pipeline](https://gitlab.com/manzerbredes/pgnp/badges/master/pipeline.svg)](https://gitlab.com/manzerbredes/pgnp/-/commits/master)
 [![license](https://img.shields.io/badge/License-LGPL_v3-blue.svg)](https://www.gnu.org/licenses/lgpl-3.0)
 
-## PGNP: PGN Parser
+# PGNP: PGN Parser
 
 PGNP is a Portable Game Notation (PGN) parser. More details about the
 PGN specification can be found [here](https://www.chessclub.com/help/PGN-spec).
 
-# Features
+Compilation:
+
+    $ git clone --recursive https://gitlab.com/manzerbredes/pgnp
+    $ mkdir pgnp/build
+    $ cd pgnp/build
+    $ cmake ../ -DCOMPILE_TESTS=1 && make -j $(nproc)
+    $ ctest # Run the tests
+
+
+## Features
 - Basic PGN parsing (tags, move, comments, variations, NAG, etc.)
 - Parse PGN files that contains multiple games
 - Handle very large files: up to 2^(sizeof(unsigned long long)*8) bytes
@@ -46,12 +55,12 @@ PGN specification can be found [here](https://www.chessclub.com/help/PGN-spec).
 	> Exit status: 0
 
 
-# How to use it ?
-PGNP can be used as a shared library in your project.
+## How to use it ?
+PGNP can be used as a static library in your project.
 You only need to include `pgnp.hpp` and linking the .so file to your
 executable.
 
-# Example
+## Example
 Somewhere at the beginning of the file:
 
     #include "pgnp.hpp"
@@ -86,7 +95,7 @@ Access to moves:
     // moves->isBlack boolean that says if current half move is for the black side
     // Check pgnp.hpp for more infos for the other fields (comments, count, etc.)
 
-# CMake Integration
+## CMake Integration
 By using the `add_subdirectory()` directive on this repository, you will be able to use the following cmake calls in your project:
 
     target_link_libraries(<YOUR_TARGET> pgnp)
